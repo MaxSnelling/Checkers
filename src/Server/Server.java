@@ -2,23 +2,26 @@ package Server;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.net.ServerSocket;
 
 public class Server {
-	private final int port = 5000;
+	private final int port = 50000;
 	private ServerSocket serverSocket;
+	private ArrayList<ClientThread> clients;
 	
 	public Server() {
-		createServerSocket();
+		clients = new ArrayList<>();
+		createServerSocket();		
 	}
 	
 	public void createServerSocket() {
 		try {
 			serverSocket = new ServerSocket(port);
+			System.out.println("Server started");
 			while(true)
 				acceptClient();
 		} catch(IOException e) {
-			System.out.println("Could not create server socket");
 			e.printStackTrace();
 		}
 	}
@@ -26,11 +29,21 @@ public class Server {
 	public void acceptClient() {
 		try {
 			Socket socket = serverSocket.accept();
-			ClientThread client = new ClientThread(this, socket);
+			createClient(socket);
 		} catch(IOException e) {
-			System.out.println("Could not create client socket");
 			e.printStackTrace();
 		}
+	}
+	
+	public void createClient(Socket socket) {
+		ClientThread client = new ClientThread(this, socket);
+		client.start();
+		clients.add(client);
+		System.out.println("Client added");
+	}
+	
+	public static void main(String[] args) {
+		new Server();
 	}
 
 }
