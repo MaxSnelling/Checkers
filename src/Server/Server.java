@@ -19,8 +19,9 @@ public class Server {
 		try {
 			serverSocket = new ServerSocket(port);
 			System.out.println("Server started");
-			while(true)
+			while(true) {
 				acceptClient();
+			}
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
