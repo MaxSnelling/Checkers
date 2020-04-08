@@ -2,9 +2,11 @@ package Server;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
 import Game.Board;
+import Game.Table;
 
 import java.net.ServerSocket;
 
@@ -49,16 +51,66 @@ public class Server {
 	}
 	
 	public void createGame(Board newGame) {
-		System.out.println(newGame);
 		games.add(newGame);
+	}
+	
+
+	public ArrayList<Board> getGames() {
+		return games;
+	}
+	
+	
+	void joinGame(ClientThread client, Board game) {
+		Board gameJoining = getBoard(game.getGameID());
+		updatePlayersGame(game.getGameID());
+	} 
+	
+	void updatePlayersGame(int gameID) {
+		Board latestGame = getBoard(gameID);
+		ArrayList<ClientThread> gameClients = getGameClients(latestGame);
+		updateClientGame(gameClients, latestGame);
+	}
+	
+	ArrayList<ClientThread> getGameClients(Board game) {
+		ArrayList<ClientThread> clients = new ArrayList<>();
+		String player1 = game.getPlayer1();
+		String player2 = game.getPlayer2();
+		for(ClientThread client:clients) {
+			if(client.getUsername().equals(player1) || client.getUsername().equals(player2)) {
+				clients.add(client);
+			}
+		}
+		return clients;
+	}
+	
+	void updateClientGame(ArrayList<ClientThread> clients, Board game) {
+		for(ClientThread client:clients) {
+			client.updateGame(game);
+		}
+	}
+	
+	Board getBoard(int gameID) {
+		for(Board game:games) {
+			if(game.getGameID() == gameID) 
+				return game;
+		}
+		throw new InvalidParameterException("Game not found");
+	}
+	
+	void updateGame(Board game) {
+		int gameIndex = -1;
+		for(int i=0; i<games.size(); i++) {
+			if(games.get(i).getGameID() == game.getGameID()) {
+				gameIndex = i;
+				break;
+			}
+		}
+		games.remove(gameIndex);
+		games.add(game);
 	}
 	
 	public static void main(String[] args) {
 		new Server();
-	}
-
-	public ArrayList<Board> getGames() {
-		return games;
 	}
 	
 	

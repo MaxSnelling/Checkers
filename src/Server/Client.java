@@ -3,27 +3,39 @@ package Server;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import Game.Board;
+import Game.Table;
 
-public class Client {
+public class Client implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private final int port = 50000;
 	private InetAddress hostIP;
 	private Socket socket;
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	private String username; 
+	private Board currentGame;
+	private int playerNumber;
 	
 	public Client() {
 		getHostIP();
 		createSocket();
 		createObjectDataStreams();
-		//receiveObject();
-		//System.out.println(getActiveGames());
+		
+		logIn("Test");
+		createGame();
+		createGame();
+		System.out.println(getActiveGames().get(0));
+		joinGame(getActiveGames().get(0));
+		System.out.println(getActiveGames().get(0).getPlayer1());
+		System.out.println(getActiveGames().get(0).getPlayer2());
+
 	}
 	
 	public void getHostIP() {
@@ -62,9 +74,21 @@ public class Client {
 		}
 	}
 	
-	public void receiveObject() {
+	public void inGame() {
 		while(socket.isConnected()) {
-			
+			Board inputBoard = null;
+			while(inputBoard == null) {
+				inputBoard = recieveBoard();
+			}
+			System.out.println(inputBoard);
+
+			switch (inputBoard.getCommand()) {
+			case UPDATE:
+				updateBoard(inputBoard);
+				break;
+			default:
+				break;
+			}
 		}
 		
 		disconnectServer();
@@ -72,11 +96,20 @@ public class Client {
 	
 	public void logIn(String username) {
 		this.username = username;
+		sendServerUsername();
+	}
+	
+	void sendServerUsername() {
+		Board messageBoard = new Board(0);
+		messageBoard.setCommand(Command.LOGIN);
+		messageBoard.setUsername(username);
+		sendBoard(messageBoard);
 	}
 	
 	void sendBoard(Board board) {
 		try {
 			out.writeObject(board);
+			out.flush();
 			out.reset();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -87,9 +120,17 @@ public class Client {
 		try {
 			return (Board) in.readObject();
 		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
+			threadWait();
 		}
 		return null;
+	}
+	
+	void threadWait() {
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	ArrayList<Board> recieveGameList() {
@@ -102,7 +143,6 @@ public class Client {
 	}
 	
 	public ArrayList<Board> getActiveGames(){
-		System.out.println("here");
 		Board messageBoard = new Board(0);
 		messageBoard.setCommand(Command.GET_GAMES);
 		sendBoard(messageBoard);
@@ -110,9 +150,26 @@ public class Client {
 	}
 	
 	public void createGame() {
-		Board newGame = new Board(0);
+		Board newGame = new Board((int) Math.round(Math.random()*100));
 		newGame.setCommand(Command.NEW_GAME);
 		sendBoard(newGame);
+	}
+	
+	public void joinGame(Board game) {
+		playerNumber = game.addPlayer(this.username);
+		currentGame = game;
+		game.setCommand(Command.JOIN_GAME);
+		sendBoard(game);
+	}
+	
+	public void moveCounter(int currentX, int currentY, int newX, int newY) {
+		currentGame.moveCounter(playerNumber, currentX, currentY, newX, newY);
+		currentGame.setCommand(Command.UPDATE);
+		sendBoard(currentGame);
+	}
+	
+	public void updateBoard(Board latestGame) {
+		this.currentGame = latestGame;
 	}
 	
 	public static void main(String[] args) {

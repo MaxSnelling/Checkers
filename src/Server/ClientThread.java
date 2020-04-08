@@ -1,19 +1,23 @@
 package Server;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import Game.Board;
+import Game.Table;
 
 public class ClientThread extends Thread implements Runnable {
 	private final Server server;
 	private final Socket socket;
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
+	private String username;
 	
 	public ClientThread(Server server, Socket socket) {
 		this.server = server;
@@ -43,18 +47,27 @@ public class ClientThread extends Thread implements Runnable {
 	}
 	
 	Board recieveBoard() {
-		Board incomingBoard = null;
 		try {
-			incomingBoard =(Board) in.readObject();
+			return (Board) in.readObject();
 		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
+			threadWait();
 		}
-		return incomingBoard;
+		return null;
+	}
+	
+	void threadWait() {
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	void sendBoard(Board board) {
 		try {
 			out.writeObject(board);
+			out.flush();
+			out.reset();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -63,6 +76,7 @@ public class ClientThread extends Thread implements Runnable {
 	void sendGameList(ArrayList<Board> gameList) {
 		try {
 			out.writeObject(gameList);
+			out.reset();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -71,26 +85,53 @@ public class ClientThread extends Thread implements Runnable {
 	@Override
 	public void run() {
 		while(socket.isConnected()) {
-			Board inputBoard = recieveBoard();
+			Board inputBoard = null;
+			while(inputBoard == null) {
+				inputBoard = recieveBoard();
+			}
 			System.out.println(inputBoard);
 
 			switch (inputBoard.getCommand()) {
-				case CREATE_GAME:
+				case LOGIN:
+					login(inputBoard.getPlayer1());
+				case NEW_GAME:
 					server.createGame(inputBoard);
 					break;
 				case GET_GAMES:
 					getGames();
+					break;
+				case JOIN_GAME:
+					joinGame(inputBoard);
 					break;
 				default:
 					break;
 			}
 			
 		}
-		disconnectClient();
+		//disconnectClient();
+	}
+	
+	void login(String username) {
+		this.username = username;
+	}
+	
+	public String getUsername() {
+		return username;
+	}
+	
+	void joinGame(Board game) {
+		server.joinGame(this, game);
 	}
 	
 	void getGames() {
 		sendGameList(server.getGames());
 	}
+	
+	public void updateGame(Board game) {
+		game.setCommand(Command.UPDATE);
+		sendBoard(game);
+	}
+	
+	
 
 }

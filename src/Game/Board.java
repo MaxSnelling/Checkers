@@ -3,6 +3,7 @@ package Game;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import Server.Client;
 import Server.Command;
 
 public class Board implements Serializable {
@@ -10,8 +11,8 @@ public class Board implements Serializable {
 	private final int BOARD_SIZE = 8;
 	private final int COUNTER_NUMBER = 12;
 	
-	private User player1;
-	private User player2;
+	private String player1;
+	private String player2;
 	private int gameID;
 	private int[][] tiles;
 	private int player1TileCount;
@@ -24,28 +25,30 @@ public class Board implements Serializable {
 		tiles = new int[BOARD_SIZE][BOARD_SIZE];
 		player1TileCount = COUNTER_NUMBER;
 		player2TileCount = COUNTER_NUMBER;
-		
 		fillBoard();
-		moveCounter(1, 3,2, 4,3);
-		moveCounter(1, 1,2, 2,3);
-		moveCounter(2, 0,5, 1,4);
-		moveCounter(2, 1,4, 3,2);
 		
-		printBoard();
+//		moveCounter(1, 3,2, 4,3);
+//		moveCounter(1, 1,2, 2,3);
+//		moveCounter(2, 0,5, 1,4);
+//		moveCounter(2, 1,4, 3,2);
+//		
+//		printBoard();
 	}
 	
-	public int addPlayer(User newPlayer) {
-		if(player1 != null) {
-			newPlayer.setGameID(gameID);
+	public int addPlayer(String newPlayer) {
+		if(player1 == null) {
 			player1 = newPlayer;
 			return 1;
-		} else if(player2 != null) {
-			newPlayer.setGameID(gameID);
+		} else if(player2 == null) {
 			player2 = newPlayer;
 			return 2;
 		} else {
 			throw new IllegalArgumentException("Game is full");
 		}
+	}
+	
+	public void setUsername(String username) {
+		this.player1 = username;
 	}
 	
 	boolean gameWon() {
@@ -182,11 +185,11 @@ public class Board implements Serializable {
 		new Board(10);
 	}
 
-	public User getPlayer1() {
+	public String getPlayer1() {
 		return player1;
 	}
 
-	public User getPlayer2() {
+	public String getPlayer2() {
 		return player2;
 	}
 
