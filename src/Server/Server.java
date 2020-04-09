@@ -67,7 +67,6 @@ public class Server {
 	void updatePlayersGame(int gameID) {
 		Board latestGame = getBoard(gameID);
 		ArrayList<ClientThread> gameClients = getGameClients(latestGame);
-		System.out.println(gameClients);
 		updateClientGame(gameClients, latestGame);
 	}
 	
@@ -75,10 +74,8 @@ public class Server {
 		ArrayList<ClientThread> gameClients = new ArrayList<>();
 		String player1 = game.getPlayer1();
 		String player2 = game.getPlayer2();
-		System.out.println(clients + player1 + player2);
 		for(ClientThread client:clients) {
 			if(client.getUsername().equals(player1) || client.getUsername().equals(player2)) {
-				System.out.println("yeeet");
 				gameClients.add(client);
 			}
 		}

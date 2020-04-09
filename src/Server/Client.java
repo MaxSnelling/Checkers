@@ -150,7 +150,7 @@ public class Client implements Serializable {
 		currentGame = game;
 		game.setCommand(Command.JOIN_GAME);
 		sendBoard(game);
-		inGame();
+//		inGame();
 	}
 	
 	public void moveCounter(int currentX, int currentY, int newX, int newY) {
@@ -166,9 +166,10 @@ public class Client implements Serializable {
 	public static void main(String[] args) {
 		Client test = new Client();
 		test.logIn("Test");
-		//test.createGame();
+//		test.createGame();
 		System.out.println(test.getActiveGames());
 		test.joinGame(test.getActiveGames().get(0));
+		test.recieveBoard();
 		System.out.println(test.getActiveGames());
 		System.out.println(test.getActiveGames().get(0).getPlayer1());
 		System.out.println(test.getActiveGames().get(0).getPlayer2());

@@ -59,6 +59,7 @@ public class ClientThread extends Thread implements Runnable {
 	}
 	
 	void sendBoard(Board board) {
+		System.out.println(board);
 		try {
 			out.writeObject(board);
 			out.flush();
@@ -69,6 +70,7 @@ public class ClientThread extends Thread implements Runnable {
 	}
 	
 	void sendGameList(ArrayList<Board> gameList) {
+		System.out.println(gameList);
 		try {
 			out.writeObject(gameList);
 			out.reset();
