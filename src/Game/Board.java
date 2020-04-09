@@ -1,9 +1,7 @@
 package Game;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
-import Server.Client;
 import Server.Command;
 
 public class Board implements Serializable {
@@ -215,6 +213,10 @@ public class Board implements Serializable {
 
 	public void setCommand(Command command) {
 		this.command = command;
-	}	
+	}
+	
+	public String toString() {
+		return gameID + "";
+	}
 
 }

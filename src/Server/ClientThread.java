@@ -1,16 +1,12 @@
 package Server;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import Game.Board;
-import Game.Table;
 
 public class ClientThread extends Thread implements Runnable {
 	private final Server server;
@@ -22,7 +18,6 @@ public class ClientThread extends Thread implements Runnable {
 	public ClientThread(Server server, Socket socket) {
 		this.server = server;
 		this.socket = socket;
-		System.out.println("1");
 		createObjectDataStreams();
 	}
 	
@@ -89,11 +84,11 @@ public class ClientThread extends Thread implements Runnable {
 			while(inputBoard == null) {
 				inputBoard = recieveBoard();
 			}
-			System.out.println(inputBoard);
 
 			switch (inputBoard.getCommand()) {
 				case LOGIN:
 					login(inputBoard.getPlayer1());
+					break;
 				case NEW_GAME:
 					server.createGame(inputBoard);
 					break;
@@ -120,7 +115,7 @@ public class ClientThread extends Thread implements Runnable {
 	}
 	
 	void joinGame(Board game) {
-		server.joinGame(this, game);
+		server.joinGame(game);
 	}
 	
 	void getGames() {

@@ -10,7 +10,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import Game.Board;
-import Game.Table;
 
 public class Client implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -27,15 +26,6 @@ public class Client implements Serializable {
 		getHostIP();
 		createSocket();
 		createObjectDataStreams();
-		
-		logIn("Test");
-		createGame();
-		createGame();
-		System.out.println(getActiveGames().get(0));
-		joinGame(getActiveGames().get(0));
-		System.out.println(getActiveGames().get(0).getPlayer1());
-		System.out.println(getActiveGames().get(0).getPlayer2());
-
 	}
 	
 	public void getHostIP() {
@@ -80,7 +70,6 @@ public class Client implements Serializable {
 			while(inputBoard == null) {
 				inputBoard = recieveBoard();
 			}
-			System.out.println(inputBoard);
 
 			switch (inputBoard.getCommand()) {
 			case UPDATE:
@@ -102,7 +91,7 @@ public class Client implements Serializable {
 	void sendServerUsername() {
 		Board messageBoard = new Board(0);
 		messageBoard.setCommand(Command.LOGIN);
-		messageBoard.setUsername(username);
+		messageBoard.addPlayer(username);
 		sendBoard(messageBoard);
 	}
 	
@@ -133,6 +122,7 @@ public class Client implements Serializable {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	ArrayList<Board> recieveGameList() {
 		try {
 			return (ArrayList<Board>) in.readObject();
@@ -160,6 +150,7 @@ public class Client implements Serializable {
 		currentGame = game;
 		game.setCommand(Command.JOIN_GAME);
 		sendBoard(game);
+		inGame();
 	}
 	
 	public void moveCounter(int currentX, int currentY, int newX, int newY) {
@@ -173,7 +164,14 @@ public class Client implements Serializable {
 	}
 	
 	public static void main(String[] args) {
-		new Client();
+		Client test = new Client();
+		test.logIn("Test");
+		//test.createGame();
+		System.out.println(test.getActiveGames());
+		test.joinGame(test.getActiveGames().get(0));
+		System.out.println(test.getActiveGames());
+		System.out.println(test.getActiveGames().get(0).getPlayer1());
+		System.out.println(test.getActiveGames().get(0).getPlayer2());
 		
 	}
 

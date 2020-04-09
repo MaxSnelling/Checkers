@@ -6,7 +6,6 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
 import Game.Board;
-import Game.Table;
 
 import java.net.ServerSocket;
 
@@ -60,27 +59,30 @@ public class Server {
 	}
 	
 	
-	void joinGame(ClientThread client, Board game) {
-		Board gameJoining = getBoard(game.getGameID());
+	void joinGame(Board game) {
+		updateGame(game);
 		updatePlayersGame(game.getGameID());
 	} 
 	
 	void updatePlayersGame(int gameID) {
 		Board latestGame = getBoard(gameID);
 		ArrayList<ClientThread> gameClients = getGameClients(latestGame);
+		System.out.println(gameClients);
 		updateClientGame(gameClients, latestGame);
 	}
 	
 	ArrayList<ClientThread> getGameClients(Board game) {
-		ArrayList<ClientThread> clients = new ArrayList<>();
+		ArrayList<ClientThread> gameClients = new ArrayList<>();
 		String player1 = game.getPlayer1();
 		String player2 = game.getPlayer2();
+		System.out.println(clients + player1 + player2);
 		for(ClientThread client:clients) {
 			if(client.getUsername().equals(player1) || client.getUsername().equals(player2)) {
-				clients.add(client);
+				System.out.println("yeeet");
+				gameClients.add(client);
 			}
 		}
-		return clients;
+		return gameClients;
 	}
 	
 	void updateClientGame(ArrayList<ClientThread> clients, Board game) {
