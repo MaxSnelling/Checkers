@@ -109,6 +109,7 @@ public class ClientThread extends Thread implements Runnable {
 	}
 	
 	void login(String username) {
+		System.out.println(username);
 		this.username = username;
 	}
 	

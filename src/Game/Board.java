@@ -8,7 +8,7 @@ public class Board implements Serializable {
 	private static final long serialVersionUID = 3L;
 	private final int BOARD_SIZE = 8;
 	private final int COUNTER_NUMBER = 12;
-	
+
 	private String player1;
 	private String player2;
 	private int gameID;
@@ -16,23 +16,23 @@ public class Board implements Serializable {
 	private int player1TileCount;
 	private int player2TileCount;
 	private Command command;
-	
-	
+
+
 	public Board(int gameID) {		
 		this.gameID = gameID;
 		tiles = new int[BOARD_SIZE][BOARD_SIZE];
 		player1TileCount = COUNTER_NUMBER;
 		player2TileCount = COUNTER_NUMBER;
 		fillBoard();
-		
-//		moveCounter(1, 3,2, 4,3);
-//		moveCounter(1, 1,2, 2,3);
-//		moveCounter(2, 0,5, 1,4);
-//		moveCounter(2, 1,4, 3,2);
-//		
-//		printBoard();
+
+		//		moveCounter(1, 3,2, 4,3);
+		//		moveCounter(1, 1,2, 2,3);
+		//		moveCounter(2, 0,5, 1,4);
+		//		moveCounter(2, 1,4, 3,2);
+		//		
+		//		printBoard();
 	}
-	
+
 	public int addPlayer(String newPlayer) {
 		if(player1 == null) {
 			player1 = newPlayer;
@@ -44,20 +44,20 @@ public class Board implements Serializable {
 			throw new IllegalArgumentException("Game is full");
 		}
 	}
-	
+
 	public void setUsername(String username) {
 		this.player1 = username;
 	}
-	
+
 	boolean gameWon() {
 		return player1TileCount == 0 || player2TileCount == 0;
 	}
-	
+
 	void fillBoard() {
 		fillPlayerTiles(1);
 		fillPlayerTiles(2);		
 	}
-	
+
 	void fillPlayerTiles(int playerNumber) {
 		int row;
 		int column;
@@ -68,7 +68,7 @@ public class Board implements Serializable {
 			row = BOARD_SIZE-(COUNTER_NUMBER/4);
 			column = 0;
 		}
-		
+
 		// TODO make board size work for odd numbers. make player 2 counters start from bottom of board
 		for(int i=0; i<COUNTER_NUMBER; i++) {
 			tiles[row][column] = playerNumber;
@@ -82,7 +82,7 @@ public class Board implements Serializable {
 				column = column+2;
 		}
 	}
-	
+
 	public void printBoard() {
 		for(int i=0; i<BOARD_SIZE; i++) {
 			String out = "";
@@ -92,7 +92,7 @@ public class Board implements Serializable {
 			System.out.println(out);
 		}
 	}
-	
+
 	public void moveCounter(int playerNumber, int currentX, int currentY, int newX, int newY) {
 		if(Math.abs(currentX-newX)==2 && Math.abs(currentY-newY)==2) {
 			takeCounter(playerNumber, currentX, currentY, newX, newY);
@@ -106,7 +106,7 @@ public class Board implements Serializable {
 			throw new IllegalArgumentException("Invalid move");
 		}
 	}
-	
+
 	void takeCounter(int playerNumber, int currentX, int currentY, int newX, int newY) {
 		if(validTake(playerNumber, currentX, currentY, newX, newY)) {
 			tiles[newY][newX] = tiles[currentY][currentX];
@@ -123,12 +123,12 @@ public class Board implements Serializable {
 			throw new IllegalArgumentException("Invalid take");
 		}
 	}
-	
+
 	void removeOpponentTile(int playerNumber) {
 		if(playerNumber == 1) player2TileCount--;
 		else player1TileCount--;
 	}
-	
+
 	boolean validTake(int playerNumber, int currentX, int currentY, int newX, int newY) {
 		if(playerNumber != tiles[(currentY+newY)/2][(currentX+newX)/2] &&
 				tiles[(currentY+newY)/2][(currentX+newX)/2] != 0 &&
@@ -143,7 +143,7 @@ public class Board implements Serializable {
 			return false;
 		}		
 	}
-	
+
 	boolean validMove(int playerNumber, int currentX, int currentY, int newX, int newY) {
 		if(Math.abs(tiles[currentY][currentX]) == playerNumber &&
 				tiles[newY][newX] == 0 &&
@@ -157,7 +157,7 @@ public class Board implements Serializable {
 		}
 		return false;
 	}
-	
+
 	boolean validMoveStandard(int playerNumber, int currentX, int currentY, int newX, int newY) {
 		if(playerNumber == 1) {
 			return  currentY < newY;
@@ -165,20 +165,20 @@ public class Board implements Serializable {
 			return currentY > newY;
 		}		
 	}
-	
+
 	void upgradeTile(int x, int y) {
 		if(!tileUpgraded(x, y))
 			tiles[y][x] *= -1;
 	}
-	
+
 	boolean tileUpgraded(int x, int y) {
 		return tiles[y][x] < 0; 
 	}
-	
+
 	boolean upgradeCheck(int y) {
 		return y==0 || y==BOARD_SIZE-1;		
 	}
-	
+
 	public static void main(String[] args) {
 		new Board(10);
 	}
@@ -214,9 +214,13 @@ public class Board implements Serializable {
 	public void setCommand(Command command) {
 		this.command = command;
 	}
-	
+
 	public String toString() {
 		return gameID + "";
+	}
+
+	public int gameIDPropertry() {
+		return gameID;
 	}
 
 }
