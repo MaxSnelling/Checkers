@@ -60,9 +60,19 @@ public class Server {
 	
 	
 	void joinGame(Board game) {
-		updateGame(game);
+		Board joiningGame = getBoard(game.getGameID());
+		addPlayer(joiningGame, game);
+		updateGame(joiningGame);
 		updatePlayersGame(game.getGameID());
 	} 
+	
+	void addPlayer(Board serverGame, Board clientGame) {
+		if(serverGame.getPlayer1() == null) {
+			serverGame.addPlayer(clientGame.getPlayer1());
+		} else if(serverGame.getPlayer2() == null) {
+			serverGame.addPlayer(clientGame.getPlayer2());
+		}
+	}
 	
 	void updatePlayersGame(int gameID) {
 		Board latestGame = getBoard(gameID);
@@ -104,8 +114,7 @@ public class Server {
 				break;
 			}
 		}
-		games.remove(gameIndex);
-		games.add(game);
+		games.set(gameIndex, game);
 	}
 	
 	public static void main(String[] args) {

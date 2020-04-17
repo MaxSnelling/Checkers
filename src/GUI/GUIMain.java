@@ -17,7 +17,4 @@ public class GUIMain extends Application {
 		client = new Client(); 
 		launch(args);
 	}
-
-
-
 }

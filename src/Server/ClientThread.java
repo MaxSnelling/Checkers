@@ -100,6 +100,8 @@ public class ClientThread extends Thread implements Runnable {
 				case JOIN_GAME:
 					joinGame(inputBoard);
 					break;
+				case UPDATE:
+					updateGameServer(inputBoard);
 				default:
 					break;
 			}
@@ -128,6 +130,11 @@ public class ClientThread extends Thread implements Runnable {
 	public void updateGame(Board game) {
 		game.setCommand(Command.UPDATE);
 		sendBoard(game);
+	}
+	
+	void updateGameServer(Board game) {
+		server.updateGame(game);
+		server.updatePlayersGame(game.getGameID());
 	}
 	
 	

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import Game.Board;
 import Server.Client;
 import javafx.application.Application;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -15,12 +15,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class GUILobby extends Application {
@@ -64,9 +62,20 @@ public class GUILobby extends Application {
 		});
 		
 		joinGameButton.setOnAction(e -> {
-			Board selectedGame = gamesTable.getSelectionModel().selectedItemProperty().get();
-			client.joinGame(selectedGame);
-			resetGamesTable();
+			ReadOnlyObjectProperty<Board> selectedRow = gamesTable.getSelectionModel().selectedItemProperty();
+			if(selectedRow != null) {			
+				client.joinGame(selectedRow.get());
+				client.getCurrentGame().printBoard();
+				resetGamesTable();
+				GUIBoard boardPage = new GUIBoard(client);
+				try {
+					boardPage.start(stage);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			} else {				
+				System.out.println("No Game Selected");
+			}
 			
 		});
 		

@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import GUI.BoardRecieveThread;
 import Game.Board;
 
 public class Client implements Serializable {
@@ -64,25 +65,6 @@ public class Client implements Serializable {
 		}
 	}
 	
-	public void inGame() {
-		while(socket.isConnected()) {
-			Board inputBoard = null;
-			while(inputBoard == null) {
-				inputBoard = recieveBoard();
-			}
-
-			switch (inputBoard.getCommand()) {
-			case UPDATE:
-				updateBoard(inputBoard);
-				break;
-			default:
-				break;
-			}
-		}
-		
-		disconnectServer();
-	}
-	
 	public void logIn(String username) {
 		this.username = username;
 		sendServerUsername();
@@ -122,6 +104,14 @@ public class Client implements Serializable {
 		}
 	}
 	
+	public Board recieveSingleBoard() {
+		try {
+			return (Board) in.readObject();
+		} catch (ClassNotFoundException | IOException e) {
+		}
+		return null;
+	}
+	
 	@SuppressWarnings("unchecked")
 	ArrayList<Board> recieveGameList() {
 		try {
@@ -147,11 +137,9 @@ public class Client implements Serializable {
 	
 	public void joinGame(Board game) {
 		playerNumber = game.addPlayer(this.username);
-		currentGame = game;
 		game.setCommand(Command.JOIN_GAME);
 		sendBoard(game);
 		currentGame = recieveBoard();
-//		inGame();
 	}
 	
 	public void moveCounter(int currentX, int currentY, int newX, int newY) {
@@ -162,6 +150,19 @@ public class Client implements Serializable {
 	
 	public void updateBoard(Board latestGame) {
 		this.currentGame = latestGame;
+	}
+	
+	public Board getCurrentGame() {
+		return currentGame;
+	}
+	
+	public void createInThread() {
+		BoardRecieveThread inThread = new BoardRecieveThread(this);
+		inThread.start();
+	}
+	
+	public ObjectInputStream getIn() {
+		return in;
 	}
 	
 	public static void main(String[] args) {
