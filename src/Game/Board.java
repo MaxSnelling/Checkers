@@ -15,6 +15,7 @@ public class Board implements Serializable {
 	private int[][] tiles;
 	private int player1TileCount;
 	private int player2TileCount;
+	private int playersTurn;
 	private Command command;
 
 
@@ -24,13 +25,7 @@ public class Board implements Serializable {
 		player1TileCount = COUNTER_NUMBER;
 		player2TileCount = COUNTER_NUMBER;
 		fillBoard();
-
-		//		moveCounter(1, 3,2, 4,3);
-		//		moveCounter(1, 1,2, 2,3);
-		//		moveCounter(2, 0,5, 1,4);
-		//		moveCounter(2, 1,4, 3,2);
-		//		
-		//		printBoard();
+		playersTurn = 1;
 	}
 
 	public int addPlayer(String newPlayer) {
@@ -94,16 +89,21 @@ public class Board implements Serializable {
 	}
 
 	public void moveCounter(int playerNumber, int currentX, int currentY, int newX, int newY) {
-		if(Math.abs(currentX-newX)==2 && Math.abs(currentY-newY)==2) {
-			takeCounter(playerNumber, currentX, currentY, newX, newY);
-		} else if(validMove(playerNumber, currentX, currentY, newX, newY)) {
-			tiles[newY][newX] = tiles[currentY][currentX];
-			tiles[currentY][currentX] = 0;			
-			if(upgradeCheck(newY)) {
-				upgradeTile(newX, newY);
-			}
+		if(playerNumber == playersTurn) {
+			if(Math.abs(currentX-newX)==2 && Math.abs(currentY-newY)==2) {
+				takeCounter(playerNumber, currentX, currentY, newX, newY);
+			} else if(validMove(playerNumber, currentX, currentY, newX, newY)) {
+				tiles[newY][newX] = tiles[currentY][currentX];
+				tiles[currentY][currentX] = 0;			
+				if(upgradeCheck(newY)) {
+					upgradeTile(newX, newY);
+				}
+			} else {
+				throw new IllegalArgumentException("Invalid move");
+			}	
+			changePlayersTurn();
 		} else {
-			throw new IllegalArgumentException("Invalid move");
+			throw new IllegalArgumentException("Invalid Move, it is not this players turn");
 		}
 	}
 
@@ -218,9 +218,15 @@ public class Board implements Serializable {
 	public String toString() {
 		return gameID + "";
 	}
-
-	public int gameIDPropertry() {
-		return gameID;
+	
+	void changePlayersTurn() {
+		if(playersTurn == 1) 
+			playersTurn = 2;
+		else playersTurn = 1;
+	}
+	
+	public int getPlayersTurn() {
+		return playersTurn;
 	}
 
 }

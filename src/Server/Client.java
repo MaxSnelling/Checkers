@@ -9,7 +9,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import GUI.BoardRecieveThread;
 import Game.Board;
 
 public class Client implements Serializable {
@@ -21,12 +20,15 @@ public class Client implements Serializable {
 	private ObjectOutputStream out;
 	private String username; 
 	private Board currentGame;
+	private ArrayList<Board> boardList;
 	private int playerNumber;
+	private ObjectInThread objectInThread;
 	
 	public Client() {
 		getHostIP();
 		createSocket();
 		createObjectDataStreams();
+		boardList = new ArrayList<>();
 	}
 	
 	public void getHostIP() {
@@ -70,10 +72,49 @@ public class Client implements Serializable {
 		sendServerUsername();
 	}
 	
+	public void createGame() {
+		Board newGame = new Board((int) Math.round(Math.random()*1000));
+		newGame.setCommand(Command.NEW_GAME);
+		sendBoard(newGame);
+	}
+	
+	public void joinGame(Board game) {
+		playerNumber = game.addPlayer(this.username);
+		game.setCommand(Command.JOIN_GAME);
+		sendBoard(game);
+	}
+	
+	public void moveCounter(int currentX, int currentY, int newX, int newY) {
+		currentGame.moveCounter(playerNumber, currentX, currentY, newX, newY);
+		currentGame.setCommand(Command.UPDATE);
+		sendBoard(currentGame);
+	}
+	
+	public void updateBoard(Board latestGame) {
+		System.out.println("game" + latestGame);
+		this.currentGame = latestGame;
+	}
+	
+	public void startObjectInThread() {
+		objectInThread = new ObjectInThread(this);
+		objectInThread.start();
+		getActiveGames();
+	}
+	
+	public void stopBoardListThread() {
+		objectInThread.interrupt();
+	}
+	
 	void sendServerUsername() {
 		Board messageBoard = new Board(0);
 		messageBoard.setCommand(Command.LOGIN);
 		messageBoard.addPlayer(username);
+		sendBoard(messageBoard);
+	}
+	
+	public void getActiveGames(){
+		Board messageBoard = new Board(0);
+		messageBoard.setCommand(Command.GET_GAMES);
 		sendBoard(messageBoard);
 	}
 	
@@ -104,14 +145,6 @@ public class Client implements Serializable {
 		}
 	}
 	
-	public Board recieveSingleBoard() {
-		try {
-			return (Board) in.readObject();
-		} catch (ClassNotFoundException | IOException e) {
-		}
-		return null;
-	}
-	
 	@SuppressWarnings("unchecked")
 	ArrayList<Board> recieveGameList() {
 		try {
@@ -122,62 +155,24 @@ public class Client implements Serializable {
 		return null;
 	}
 	
-	public ArrayList<Board> getActiveGames(){
-		Board messageBoard = new Board(0);
-		messageBoard.setCommand(Command.GET_GAMES);
-		sendBoard(messageBoard);
-		return recieveGameList();
-	}
-	
-	public void createGame() {
-		Board newGame = new Board((int) Math.round(Math.random()*100));
-		newGame.setCommand(Command.NEW_GAME);
-		sendBoard(newGame);
-	}
-	
-	public void joinGame(Board game) {
-		playerNumber = game.addPlayer(this.username);
-		game.setCommand(Command.JOIN_GAME);
-		sendBoard(game);
-		currentGame = recieveBoard();
-	}
-	
-	public void moveCounter(int currentX, int currentY, int newX, int newY) {
-		currentGame.moveCounter(playerNumber, currentX, currentY, newX, newY);
-		currentGame.setCommand(Command.UPDATE);
-		sendBoard(currentGame);
-	}
-	
-	public void updateBoard(Board latestGame) {
-		this.currentGame = latestGame;
-	}
-	
 	public Board getCurrentGame() {
 		return currentGame;
 	}
 	
-	public void createInThread() {
-		BoardRecieveThread inThread = new BoardRecieveThread(this);
-		inThread.start();
+	public void updateBoardList(ArrayList<Board> boardList) {
+		this.boardList = boardList;
 	}
 	
-	public ObjectInputStream getIn() {
+	public ArrayList<Board> getBoardList() {
+		return boardList;
+	}
+	
+	public ObjectInputStream getObjectInStream() {
 		return in;
 	}
 	
-	public static void main(String[] args) {
-		Client test = new Client();
-		test.logIn("Test");
-		test.createGame();
-		test.createGame();
-		test.createGame();
-		System.out.println(test.getActiveGames());
-		test.joinGame(test.getActiveGames().get(0));
-		//test.recieveBoard();
-		System.out.println(test.getActiveGames());
-		System.out.println(test.getActiveGames().get(0).getPlayer1());
-		System.out.println(test.getActiveGames().get(0).getPlayer2());
-		
+	public int getPlayerNumber() {
+		return playerNumber;
 	}
 
 }

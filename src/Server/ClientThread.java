@@ -27,8 +27,7 @@ public class ClientThread extends Thread implements Runnable {
 			in = new ObjectInputStream(socket.getInputStream());
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-    	
+		}    	
 	}
 	
 	public void disconnectClient() {
@@ -39,6 +38,61 @@ public class ClientThread extends Thread implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void run() {
+		while(socket.isConnected()) {
+			Board inputBoard = null;
+			while(inputBoard == null) {
+				inputBoard = recieveBoard();
+			}
+
+			switch (inputBoard.getCommand()) {
+				case LOGIN:
+					login(inputBoard.getPlayer1());
+					break;
+				case NEW_GAME:
+					newGame(inputBoard);
+					break;
+				case GET_GAMES:
+					getGames();
+					break;
+				case JOIN_GAME:
+					joinGame(inputBoard);
+					break;
+				case UPDATE:
+					updateGameServer(inputBoard);
+				default:
+					break;
+			}
+		}
+	}
+	
+	void login(String username) {
+		this.username = username;
+	}
+	
+	void newGame(Board game) {
+		server.createGame(game);
+	}
+	
+	void getGames() {
+		sendGameList(server.getGames());
+	}
+	
+	void joinGame(Board game) {
+		server.joinGame(game);
+	}
+	
+	void updateGameServer(Board game) {
+		server.updateGameServer(game);
+		server.updatePlayersGame(game.getGameID());
+	}
+	
+	public void updateGame(Board game) {
+		game.setCommand(Command.UPDATE);
+		sendBoard(game);
 	}
 	
 	Board recieveBoard() {
@@ -78,65 +132,9 @@ public class ClientThread extends Thread implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
-	@Override
-	public void run() {
-		while(socket.isConnected()) {
-			Board inputBoard = null;
-			while(inputBoard == null) {
-				inputBoard = recieveBoard();
-			}
-
-			switch (inputBoard.getCommand()) {
-				case LOGIN:
-					login(inputBoard.getPlayer1());
-					break;
-				case NEW_GAME:
-					server.createGame(inputBoard);
-					break;
-				case GET_GAMES:
-					getGames();
-					break;
-				case JOIN_GAME:
-					joinGame(inputBoard);
-					break;
-				case UPDATE:
-					updateGameServer(inputBoard);
-				default:
-					break;
-			}
-			
-		}
-		//disconnectClient();
-	}
-	
-	void login(String username) {
-		System.out.println(username);
-		this.username = username;
-	}
 	
 	public String getUsername() {
 		return username;
-	}
-	
-	void joinGame(Board game) {
-		server.joinGame(game);
-	}
-	
-	void getGames() {
-		sendGameList(server.getGames());
-	}
-	
-	public void updateGame(Board game) {
-		game.setCommand(Command.UPDATE);
-		sendBoard(game);
-	}
-	
-	void updateGameServer(Board game) {
-		server.updateGame(game);
-		server.updatePlayersGame(game.getGameID());
-	}
-	
-	
+	}	
 
 }

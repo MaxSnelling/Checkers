@@ -1,6 +1,5 @@
 package GUI;
 
-
 import Server.Client;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
@@ -13,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -33,6 +33,7 @@ public class GUILogIn extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		this.stage = stage;
+		stage.setTitle("Checkers");
 		Group root = new Group();
 		ObservableList<Node> rootChildren = root.getChildren();
 
@@ -41,15 +42,24 @@ public class GUILogIn extends Application {
 		welcomeGrid.setHgap(5);
 		welcomeGrid.setVgap(5);
 		welcomeGrid.setAlignment(Pos.CENTER);
+		welcomeGrid.setMinWidth(SCENE_WIDTH);
+		welcomeGrid.setMinHeight(SCENE_HEIGHT);
 
 		Text titleText = new Text("Checkers");
 		titleText.setTextAlignment(TextAlignment.CENTER);
+		
 		Text welcomeText = new Text("Welcome to our new online checkers game. Please Log in");
+		welcomeText.setTextAlignment(TextAlignment.CENTER);
+		
 		TextField usernameTextField = new TextField();
+		usernameTextField.setPromptText("Username");
+		
 		Button logInButton = new Button("Log In");
 
 		logInButton.setOnAction(e -> {
-			client.logIn(usernameTextField.getText());
+			String usernameInput = usernameTextField.getText();
+			client.logIn(usernameInput);
+			stage.setTitle("Checkers : " + usernameInput);
 			openLobbyPage();			 
 		});
 

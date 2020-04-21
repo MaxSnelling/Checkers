@@ -51,19 +51,15 @@ public class Server {
 	
 	public void createGame(Board newGame) {
 		games.add(newGame);
-	}
-	
-
-	public ArrayList<Board> getGames() {
-		return games;
-	}
-	
+		updateClientGameList();
+	}	
 	
 	void joinGame(Board game) {
-		Board joiningGame = getBoard(game.getGameID());
-		addPlayer(joiningGame, game);
-		updateGame(joiningGame);
+		Board joiningGameServer = getBoard(game.getGameID());
+		addPlayer(joiningGameServer, game);
+		updateGameServer(joiningGameServer);
 		updatePlayersGame(game.getGameID());
+		updateClientGameList();
 	} 
 	
 	void addPlayer(Board serverGame, Board clientGame) {
@@ -71,19 +67,20 @@ public class Server {
 			serverGame.addPlayer(clientGame.getPlayer1());
 		} else if(serverGame.getPlayer2() == null) {
 			serverGame.addPlayer(clientGame.getPlayer2());
-		}
+		}		
 	}
 	
 	void updatePlayersGame(int gameID) {
 		Board latestGame = getBoard(gameID);
 		ArrayList<ClientThread> gameClients = getGameClients(latestGame);
-		updateClientGame(gameClients, latestGame);
+		updateClientsGame(gameClients, latestGame);
 	}
 	
 	ArrayList<ClientThread> getGameClients(Board game) {
 		ArrayList<ClientThread> gameClients = new ArrayList<>();
 		String player1 = game.getPlayer1();
 		String player2 = game.getPlayer2();
+		System.out.println(clients);
 		for(ClientThread client:clients) {
 			if(client.getUsername().equals(player1) || client.getUsername().equals(player2)) {
 				gameClients.add(client);
@@ -92,7 +89,7 @@ public class Server {
 		return gameClients;
 	}
 	
-	void updateClientGame(ArrayList<ClientThread> clients, Board game) {
+	void updateClientsGame(ArrayList<ClientThread> clients, Board game) {
 		for(ClientThread client:clients) {
 			client.updateGame(game);
 		}
@@ -106,7 +103,8 @@ public class Server {
 		throw new InvalidParameterException("Game not found");
 	}
 	
-	void updateGame(Board game) {
+	void updateGameServer(Board game) {
+		System.out.println("game" + game);
 		int gameIndex = -1;
 		for(int i=0; i<games.size(); i++) {
 			if(games.get(i).getGameID() == game.getGameID()) {
@@ -115,6 +113,16 @@ public class Server {
 			}
 		}
 		games.set(gameIndex, game);
+	}
+	
+	void updateClientGameList() {
+		for(ClientThread client:clients) {
+			client.sendGameList(games);
+		}
+	}
+	
+	public ArrayList<Board> getGames() {
+		return games;
 	}
 	
 	public static void main(String[] args) {
