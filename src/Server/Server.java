@@ -117,7 +117,7 @@ public class Server {
 	
 	void updateClientGameList() {
 		for(ClientThread client:clients) {
-			client.sendGameList(games);
+			client.sendObjectToClient(games);
 		}
 	}
 	

@@ -14,14 +14,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class GUIBoard extends Application {
-	public static final int SCENE_WIDTH = 800;
-	public static final int SCENE_HEIGHT = 800;
 	private final int BOARD_XOFFSET = 100;
 	private final int BOARD_YOFFSET = 100;
 	private final int TILE_SIZE = 50;
@@ -47,6 +46,7 @@ public class GUIBoard extends Application {
 		Text titleText = new Text("Checkers");
 		titleText.setX(BOARD_XOFFSET+TILE_SIZE*4);
 		titleText.setY(BOARD_YOFFSET/2);
+		titleText.setFont(Font.font(16));
 		root.getChildren().add(titleText);
 		
 		addBoardSquares();
@@ -56,7 +56,7 @@ public class GUIBoard extends Application {
 		addPlayerText();
 		addTurnText();
 		
-		Scene scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
+		Scene scene = new Scene(root, GUIMain.SCENE_WIDTH, GUIMain.SCENE_HEIGHT);
 		scene.setFill(Color.BEIGE);
 		stage.setScene(scene);
 		stage.show();
@@ -153,7 +153,7 @@ public class GUIBoard extends Application {
 		int playerNumber = client.getPlayerNumber();	
 		
 		Text playerText = new Text();
-		playerText.setX(SCENE_WIDTH/2);
+		playerText.setX(GUIMain.SCENE_WIDTH/2);
 		playerText.setY(50);
 		playerText.setTextAlignment(TextAlignment.CENTER);	
 		
@@ -173,7 +173,7 @@ public class GUIBoard extends Application {
 		int playerNumber = client.getPlayerNumber();
 		
 		turnText = new Text();
-		turnText.setX(SCENE_WIDTH/2);
+		turnText.setX(GUIMain.SCENE_WIDTH/2);
 		turnText.setY(BOARD_YOFFSET + TILE_SIZE*8 + 50);
 		turnText.setTextAlignment(TextAlignment.CENTER);
 		

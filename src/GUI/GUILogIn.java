@@ -1,26 +1,25 @@
 package GUI;
 
+import Database.DatabaseQuery;
+import Game.Profile;
 import Server.Client;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class GUILogIn extends Application {
-	public static final int SCENE_WIDTH = 800;
-	public static final int SCENE_HEIGHT = 400;
+	TextField usernameField;
+	TextField passwordField;
 	public Stage stage;
 	private Client client;
 
@@ -35,55 +34,59 @@ public class GUILogIn extends Application {
 		this.stage = stage;
 		stage.setTitle("Checkers");
 		Group root = new Group();
-		ObservableList<Node> rootChildren = root.getChildren();
 
-		GridPane welcomeGrid = new GridPane();
-		welcomeGrid.setPadding(new Insets(15));
-		welcomeGrid.setHgap(5);
-		welcomeGrid.setVgap(5);
-		welcomeGrid.setAlignment(Pos.CENTER);
-		welcomeGrid.setMinWidth(SCENE_WIDTH);
-		welcomeGrid.setMinHeight(SCENE_HEIGHT);
+		GridPane grid = GUIMain.createGrid();
 
 		Text titleText = new Text("Checkers");
-		titleText.setTextAlignment(TextAlignment.CENTER);
+		Text usernameText = new Text("Username: ");
+		Text passwordText = new Text("Password: ");
+		Button logInButton = new Button("Log in");
+		Button signUpButton = new Button("Sign up");
+		usernameField = new TextField();
+		passwordField = new TextField();
 		
-		Text welcomeText = new Text("Welcome to our new online checkers game. Please Log in");
-		welcomeText.setTextAlignment(TextAlignment.CENTER);
+		titleText.setFont(Font.font(16));
 		
-		TextField usernameTextField = new TextField();
-		usernameTextField.setPromptText("Username");
-		
-		Button logInButton = new Button("Log In");
+		logInButton.setOnAction(eventHandlerLogIn);	
+		signUpButton.setOnAction(eventHandlerSignUp);
 
-		logInButton.setOnAction(e -> {
-			String usernameInput = usernameTextField.getText();
-			client.logIn(usernameInput);
-			stage.setTitle("Checkers : " + usernameInput);
-			openLobbyPage();			 
-		});
-
-		welcomeGrid.add(titleText, 0, 1);
+		grid.add(titleText, 0,0);
+		grid.add(usernameText, 0, 2);
+		grid.add(usernameField, 1, 2);
+		grid.add(passwordText, 0, 3);
+		grid.add(passwordField, 1,3);
+		grid.add(logInButton, 0, 4);
+		grid.add(signUpButton, 1, 4);
+		
+		GridPane.setConstraints(titleText, 0, 0, 2, 1);
 		GridPane.setHalignment(titleText, HPos.CENTER);
-		welcomeGrid.add(welcomeText, 0, 3);	    
-		welcomeGrid.add(usernameTextField, 0, 4);
-		welcomeGrid.add(logInButton, 1, 4);	    
-		rootChildren.add(welcomeGrid);
+		GridPane.setHalignment(logInButton, HPos.RIGHT);
+		
+		root.getChildren().add(grid);
 
-		Scene scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
+		Scene scene = new Scene(root, GUIMain.SCENE_WIDTH, GUIMain.SCENE_HEIGHT);
 		scene.setFill(Color.BISQUE);
 		stage.setScene(scene);
 		stage.show();
 	}
 
-	void openLobbyPage() {
-		GUILobby lobbyPage = new GUILobby(client);
-		try {
-			lobbyPage.start(stage);
-		} catch (Exception e1) {
-			e1.printStackTrace();
+	private final EventHandler<ActionEvent> eventHandlerLogIn = e -> {
+		String usernameInput = usernameField.getText();
+		String passwordInput = passwordField.getText();
+		
+		Profile inputProfile = new Profile(usernameInput, passwordInput);
+		if(DatabaseQuery.passwordCheck(inputProfile)) {
+			client.logIn(inputProfile);
+			stage.setTitle("Checkers : " + usernameInput);
+			GUIMain.openLobbyPage(stage);	
+		} else {
+			System.out.println("Username/Password are incorrect");
 		}
-	}
+	};
+	
+	private final EventHandler<ActionEvent> eventHandlerSignUp = e -> {
+		GUIMain.openSignUpPage(stage);
+	};
 
 	public static void main(String[] args) {
 		launch(args);

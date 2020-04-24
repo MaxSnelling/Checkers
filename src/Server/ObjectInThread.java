@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import Game.Board;
+import Game.Profile;
 
 public class ObjectInThread extends Thread {
 	private Client client;
@@ -28,6 +29,9 @@ public class ObjectInThread extends Thread {
 			} else if(objectIn instanceof ArrayList){
 				ArrayList<Board> boardListIn = (ArrayList<Board>) objectIn;
 				client.updateBoardList(boardListIn);
+			} else if(objectIn instanceof Profile) {
+				Profile profileIn = (Profile) objectIn;
+				client.updateProfile(profileIn);
 			} else {
 				System.out.println(objectIn + "not recognised");
 			}

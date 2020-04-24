@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import Game.Board;
+import Game.Profile;
 
 public class Client implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -18,7 +19,7 @@ public class Client implements Serializable {
 	private Socket socket;
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
-	private String username; 
+	private Profile profile; 
 	private Board currentGame;
 	private ArrayList<Board> boardList;
 	private int playerNumber;
@@ -67,27 +68,28 @@ public class Client implements Serializable {
 		}
 	}
 	
-	public void logIn(String username) {
-		this.username = username;
-		sendServerUsername();
+	public void logIn(Profile profile) {
+		this.profile = profile;
+		profile.setCommand(Command.LOGIN);
+		sendObjectToServer(profile);
 	}
 	
 	public void createGame() {
 		Board newGame = new Board((int) Math.round(Math.random()*1000));
 		newGame.setCommand(Command.NEW_GAME);
-		sendBoard(newGame);
+		sendObjectToServer(newGame);
 	}
 	
 	public void joinGame(Board game) {
-		playerNumber = game.addPlayer(this.username);
+		playerNumber = game.addPlayer(this.profile.getUsername());
 		game.setCommand(Command.JOIN_GAME);
-		sendBoard(game);
+		sendObjectToServer(game);
 	}
 	
 	public void moveCounter(int currentX, int currentY, int newX, int newY) {
 		currentGame.moveCounter(playerNumber, currentX, currentY, newX, newY);
 		currentGame.setCommand(Command.UPDATE);
-		sendBoard(currentGame);
+		sendObjectToServer(currentGame);
 	}
 	
 	public void updateBoard(Board latestGame) {
@@ -105,22 +107,15 @@ public class Client implements Serializable {
 		objectInThread.interrupt();
 	}
 	
-	void sendServerUsername() {
-		Board messageBoard = new Board(0);
-		messageBoard.setCommand(Command.LOGIN);
-		messageBoard.addPlayer(username);
-		sendBoard(messageBoard);
-	}
-	
 	public void getActiveGames(){
 		Board messageBoard = new Board(0);
 		messageBoard.setCommand(Command.GET_GAMES);
-		sendBoard(messageBoard);
+		sendObjectToServer(messageBoard);
 	}
 	
-	void sendBoard(Board board) {
+	private<E> void sendObjectToServer(E object) {
 		try {
-			out.writeObject(board);
+			out.writeObject(object);
 			out.flush();
 			out.reset();
 		} catch (IOException e) {
@@ -173,6 +168,10 @@ public class Client implements Serializable {
 	
 	public int getPlayerNumber() {
 		return playerNumber;
+	}
+	
+	public void updateProfile(Profile profile) {
+		this.profile = profile;
 	}
 
 }

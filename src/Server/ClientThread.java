@@ -4,16 +4,17 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 
+import Database.DatabaseQuery;
 import Game.Board;
+import Game.Profile;
 
 public class ClientThread extends Thread implements Runnable {
 	private final Server server;
 	private final Socket socket;
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
-	private String username;
+	private Profile profile;
 	
 	public ClientThread(Server server, Socket socket) {
 		this.server = server;
@@ -43,42 +44,54 @@ public class ClientThread extends Thread implements Runnable {
 	@Override
 	public void run() {
 		while(socket.isConnected()) {
-			Board inputBoard = null;
-			while(inputBoard == null) {
-				inputBoard = recieveBoard();
+			Object inputObject = null;
+			while(inputObject == null) {
+				inputObject = recieveObject();
 			}
-
-			switch (inputBoard.getCommand()) {
-				case LOGIN:
-					login(inputBoard.getPlayer1());
-					break;
-				case NEW_GAME:
-					newGame(inputBoard);
-					break;
-				case GET_GAMES:
-					getGames();
-					break;
-				case JOIN_GAME:
-					joinGame(inputBoard);
-					break;
-				case UPDATE:
-					updateGameServer(inputBoard);
-				default:
-					break;
+			
+			if(inputObject instanceof Board) {
+				Board inputBoard = (Board) inputObject;
+				switch (inputBoard.getCommand()) {
+					case NEW_GAME:
+						newGame(inputBoard);
+						break;
+					case GET_GAMES:
+						sendGameList();
+						break;
+					case JOIN_GAME:
+						joinGame(inputBoard);
+						break;
+					case UPDATE:
+						updateGameServer(inputBoard);
+					default:
+						break;
+				}
+			} else if(inputObject instanceof Profile) {
+				Profile inputProfile = (Profile) inputObject;
+				switch (inputProfile.getCommand()) {
+					case LOGIN:
+						login(inputProfile);
+						break;
+					default:
+						break;
+				
+				}
 			}
 		}
 	}
 	
-	void login(String username) {
-		this.username = username;
+	void login(Profile profile) {
+		Profile serverProfile = DatabaseQuery.logIn(profile);
+		this.profile = serverProfile;
+		sendObjectToClient(serverProfile);
 	}
 	
 	void newGame(Board game) {
 		server.createGame(game);
 	}
 	
-	void getGames() {
-		sendGameList(server.getGames());
+	void sendGameList() {
+		sendObjectToClient(server.getGames());
 	}
 	
 	void joinGame(Board game) {
@@ -92,12 +105,12 @@ public class ClientThread extends Thread implements Runnable {
 	
 	public void updateGame(Board game) {
 		game.setCommand(Command.UPDATE);
-		sendBoard(game);
+		sendObjectToClient(game);
 	}
 	
-	Board recieveBoard() {
+	private Object recieveObject() {
 		try {
-			return (Board) in.readObject();
+			return in.readObject();
 		} catch (ClassNotFoundException | IOException e) {
 			threadWait();
 		}
@@ -112,10 +125,9 @@ public class ClientThread extends Thread implements Runnable {
 		}
 	}
 	
-	void sendBoard(Board board) {
-		System.out.println(board);
+	<E> void sendObjectToClient(E object) {
 		try {
-			out.writeObject(board);
+			out.writeObject(object);
 			out.flush();
 			out.reset();
 		} catch (IOException e) {
@@ -123,18 +135,8 @@ public class ClientThread extends Thread implements Runnable {
 		}
 	}
 	
-	void sendGameList(ArrayList<Board> gameList) {
-		System.out.println(gameList);
-		try {
-			out.writeObject(gameList);
-			out.reset();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	public String getUsername() {
-		return username;
+		return profile.getUsername();
 	}	
 
 }
