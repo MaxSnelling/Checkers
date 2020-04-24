@@ -75,7 +75,7 @@ public class GUILogIn extends Application {
 		String passwordInput = passwordField.getText();
 		
 		Profile inputProfile = new Profile(usernameInput, passwordInput);
-		if(DatabaseQuery.passwordCheck(inputProfile)) {
+		if(client.passwordCheck(inputProfile)) {
 			client.logIn(inputProfile);
 			stage.setTitle("Checkers : " + usernameInput);
 			GUIMain.openLobbyPage(stage);	

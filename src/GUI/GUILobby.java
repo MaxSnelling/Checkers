@@ -134,9 +134,9 @@ public class GUILobby extends Application {
 	
 	private void threadSleep() {
 		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e2) {
-			e2.printStackTrace();
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}	
 	}
 

@@ -3,8 +3,10 @@ package Database;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import Game.Board;
 import Game.Profile;
 
 public class DatabaseInsert {
@@ -27,12 +29,36 @@ public class DatabaseInsert {
 		} catch (IOException | SQLException e) {
 			e.printStackTrace();
 		}
-		
-		
-		
-		
-		
+	}
 	
+	public static Board createGame() {
+		try {
+			Connection connection = DatabaseConnect.connectDatabase();
+			PreparedStatement createGameStatement = connection.prepareStatement("INSERT INTO games DEFAULT VALUES");				
+			createGameStatement.execute();
+			
+			PreparedStatement getGameIDStatement = connection.prepareStatement("SELECT MAX(game_ID) FROM games");				
+			ResultSet getGameIDResult = getGameIDStatement.executeQuery();
+			getGameIDResult.next();
+			int newGameID = getGameIDResult.getInt("max");
+			
+			return new Board(newGameID);			
+		} catch (IOException | SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static void addUserGame(int userID, int gameID) {
+		try {
+			Connection connection = DatabaseConnect.connectDatabase();			
+			PreparedStatement insertUserGameStatement = connection.prepareStatement(
+					"INSERT INTO user_games(user_ID, game_ID) VALUES (?,?)");
+			insertUserGameStatement.setInt(1, userID);
+			insertUserGameStatement.setInt(2, gameID);
+		} catch (IOException | SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

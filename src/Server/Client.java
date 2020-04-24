@@ -74,10 +74,17 @@ public class Client implements Serializable {
 		sendObjectToServer(profile);
 	}
 	
+	public boolean passwordCheck(Profile profile) {
+		profile.setCommand(Command.PASSWORD_CHECK);
+		sendObjectToServer(profile);
+		Profile profileIn = recieveProfile();
+		return profileIn.getCommand().equals(Command.CORRECT);
+	}
+	
 	public void createGame() {
-		Board newGame = new Board((int) Math.round(Math.random()*1000));
-		newGame.setCommand(Command.NEW_GAME);
-		sendObjectToServer(newGame);
+		Board messageBoard = new Board();
+		messageBoard.setCommand(Command.NEW_GAME);
+		sendObjectToServer(messageBoard);
 	}
 	
 	public void joinGame(Board game) {
@@ -126,6 +133,15 @@ public class Client implements Serializable {
 	Board recieveBoard() {
 		try {
 			return (Board) in.readObject();
+		} catch (ClassNotFoundException | IOException e) {
+			threadWait();
+		}
+		return null;
+	}
+	
+	Profile recieveProfile() {
+		try {
+			return (Profile) in.readObject();
 		} catch (ClassNotFoundException | IOException e) {
 			threadWait();
 		}

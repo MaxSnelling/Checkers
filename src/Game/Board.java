@@ -27,6 +27,9 @@ public class Board implements Serializable {
 		fillBoard();
 		playersTurn = 1;
 	}
+	
+	public Board() {
+	}
 
 	public int addPlayer(String newPlayer) {
 		if(player1 == null) {

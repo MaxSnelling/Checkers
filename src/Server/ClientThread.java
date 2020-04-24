@@ -72,6 +72,9 @@ public class ClientThread extends Thread implements Runnable {
 					case LOGIN:
 						login(inputProfile);
 						break;
+					case PASSWORD_CHECK:
+						passwordCheck(inputProfile);
+						break;
 					default:
 						break;
 				
@@ -86,8 +89,16 @@ public class ClientThread extends Thread implements Runnable {
 		sendObjectToClient(serverProfile);
 	}
 	
+	void passwordCheck(Profile profile) {
+		Boolean passwordCheckResult = DatabaseQuery.passwordCheck(profile);
+		if(passwordCheckResult) {
+			profile.setCommand(Command.CORRECT);
+			sendObjectToClient(profile);
+		}
+	}
+	
 	void newGame(Board game) {
-		server.createGame(game);
+		server.createGame();
 	}
 	
 	void sendGameList() {

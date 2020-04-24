@@ -5,6 +5,8 @@ import java.net.Socket;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
+import Database.DatabaseInsert;
+import Database.DatabaseQuery;
 import Game.Board;
 
 import java.net.ServerSocket;
@@ -49,7 +51,8 @@ public class Server {
 		System.out.println("Client added");
 	}
 	
-	public void createGame(Board newGame) {
+	public void createGame() {
+		Board newGame = DatabaseInsert.createGame();
 		games.add(newGame);
 		updateClientGameList();
 	}	
@@ -68,6 +71,7 @@ public class Server {
 		} else if(serverGame.getPlayer2() == null) {
 			serverGame.addPlayer(clientGame.getPlayer2());
 		}		
+		DatabaseQuery.addPlayer(serverGame);
 	}
 	
 	void updatePlayersGame(int gameID) {

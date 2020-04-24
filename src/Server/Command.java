@@ -5,5 +5,7 @@ public enum Command {
 	LOGIN,
 	NEW_GAME,
 	JOIN_GAME,
-	UPDATE
+	UPDATE,
+	PASSWORD_CHECK,
+	CORRECT
 }

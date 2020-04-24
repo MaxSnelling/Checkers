@@ -107,7 +107,7 @@ public class GUISignUp extends Application {
 		String emailAddressInput = emailAddressField.getText();
 		
 		if(passwordInput.equals(rePasswordInput) ) {			
-			if(DatabaseQuery.userNameCheck(usernameInput)) {
+			if(DatabaseQuery.usernameCheck(usernameInput)) {
 				Profile inputProfile = new Profile(usernameInput, firstNameInput, lastNameInput, 
 	        									passwordInput, dateOfBirthInput, emailAddressInput);
 				DatabaseInsert.addProfile(inputProfile);

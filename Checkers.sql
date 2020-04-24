@@ -5,7 +5,8 @@ CREATE TABLE "users" (
   "last_name" varchar,
   "password" varchar,
   "date_of_birth" date,
-  "email_address" varchar
+  "email_address" varchar,
+  "logged_in" boolean
 );
 
 CREATE TABLE "games" (
@@ -14,17 +15,16 @@ CREATE TABLE "games" (
   "player2" varchar,
   "startTime" timestamp,
   "endTime" timestamp,
-  "winner" varchar,
-  "admin_id" int
+  "winner" varchar
 );
 
 CREATE TABLE "user_games" (
-  "game_id" int,
   "user_id" int,
-  PRIMARY KEY ("game_id", "user_id")
+  "game_id" int,
+  PRIMARY KEY ("user_id", "game_id")
 );
 
-ALTER TABLE "user_games" ADD FOREIGN KEY ("game_id") REFERENCES "users" ("user_id");
+ALTER TABLE "user_games" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("user_id");
 
-ALTER TABLE "user_games" ADD FOREIGN KEY ("user_id") REFERENCES "games" ("game_id");
+ALTER TABLE "user_games" ADD FOREIGN KEY ("game_id") REFERENCES "games" ("game_id");
 
