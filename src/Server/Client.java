@@ -22,6 +22,7 @@ public class Client implements Serializable {
 	private Profile profile; 
 	private Board currentGame;
 	private ArrayList<Board> boardList;
+	private ArrayList<Board> recentGames;
 	private int playerNumber;
 	private ObjectInThread objectInThread;
 	
@@ -78,7 +79,21 @@ public class Client implements Serializable {
 		profile.setCommand(Command.PASSWORD_CHECK);
 		sendObjectToServer(profile);
 		Profile profileIn = recieveProfile();
+		System.out.println(profileIn);
 		return profileIn.getCommand().equals(Command.CORRECT);
+	}
+	
+	public boolean usernameCheck(String username) {
+		Profile usernameCheckProfile = new Profile(username, "");
+		usernameCheckProfile.setCommand(Command.USERNAME_CHECK);
+		sendObjectToServer(usernameCheckProfile);
+		usernameCheckProfile = recieveProfile();
+		return usernameCheckProfile.getCommand().equals(Command.CORRECT);
+	}
+	
+	public void addProfileToDatabase(Profile profile) {
+		profile.setCommand(Command.NEW_PROFILE);
+		sendObjectToServer(profile);
 	}
 	
 	public void createGame() {
@@ -110,13 +125,19 @@ public class Client implements Serializable {
 		getActiveGames();
 	}
 	
-	public void stopBoardListThread() {
-		objectInThread.interrupt();
+	public void stopObjectInThread() {
+		objectInThread.closeThread();
 	}
 	
 	public void getActiveGames(){
 		Board messageBoard = new Board(0);
 		messageBoard.setCommand(Command.GET_GAMES);
+		sendObjectToServer(messageBoard);
+	}
+	
+	public void updateRecentGames() {
+		Board messageBoard = new Board();
+		messageBoard.setCommand(Command.RECENT_GAMES);
 		sendObjectToServer(messageBoard);
 	}
 	
@@ -128,15 +149,6 @@ public class Client implements Serializable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	Board recieveBoard() {
-		try {
-			return (Board) in.readObject();
-		} catch (ClassNotFoundException | IOException e) {
-			threadWait();
-		}
-		return null;
 	}
 	
 	Profile recieveProfile() {
@@ -156,14 +168,12 @@ public class Client implements Serializable {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	ArrayList<Board> recieveGameList() {
-		try {
-			return (ArrayList<Board>) in.readObject();
-		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-		}
-		return null;
+	public void setRecentGames(ArrayList<Board> recentGames) {
+		this.recentGames = recentGames;
+	}
+	
+	public ArrayList<Board> getRecentGames() {
+		return recentGames;
 	}
 	
 	public Board getCurrentGame() {
@@ -184,6 +194,10 @@ public class Client implements Serializable {
 	
 	public int getPlayerNumber() {
 		return playerNumber;
+	}
+	
+	public Profile getProfile() {
+		return profile;
 	}
 	
 	public void updateProfile(Profile profile) {

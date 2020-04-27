@@ -1,11 +1,11 @@
 CREATE TABLE "users" (
   "user_id" SERIAL PRIMARY KEY,
-  "username" varchar,
+  "username" varchar UNIQUE,
   "first_name" varchar,
   "last_name" varchar,
   "password" varchar,
   "date_of_birth" date,
-  "email_address" varchar,
+  "email_address" varchar UNIQUE,
   "logged_in" boolean
 );
 
@@ -13,8 +13,8 @@ CREATE TABLE "games" (
   "game_id" SERIAL PRIMARY KEY,
   "player1" varchar,
   "player2" varchar,
-  "startTime" timestamp,
-  "endTime" timestamp,
+  "start_time" timestamp,
+  "end_time" timestamp,
   "winner" varchar
 );
 

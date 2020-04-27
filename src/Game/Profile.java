@@ -18,6 +18,7 @@ public class Profile implements Serializable {
 	public Profile(String username, String password) {
 		this.username = username;
 		this.password = password;
+		this.command = Command.NULL;
 	}
 	
 	public Profile(String username, String firstName, String lastName,
@@ -28,6 +29,7 @@ public class Profile implements Serializable {
 		this.password = password;
 		this.dateOfBirth = dateOfBirth;
 		this.emailAddress = emailAddress;
+		this.command = Command.NULL;
 	}
 
 	public String getUsername() {

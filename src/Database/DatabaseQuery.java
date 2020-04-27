@@ -6,12 +6,12 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-
-import com.sun.java.accessibility.util.GUIInitializedListener;
 
 import Game.Board;
 import Game.Profile;
+import Server.Command;
 
 public class DatabaseQuery {
 	
@@ -123,6 +123,42 @@ public class DatabaseQuery {
 		} catch (IOException | SQLException e) {
 			e.printStackTrace();
 			return -1;
+		}
+	}
+	
+	public static ArrayList<Board> getLast5Games(String username) {
+		try {
+			Connection connection = DatabaseConnect.connectDatabase();			
+			PreparedStatement getLast5GamesStatement = connection.prepareStatement(
+					"SELECT game_id, player1, player2, winner, start_time, end_time FROM users JOIN "
+					+ "(SELECT * FROM user_games JOIN games using(game_id)) AS A USING(user_id)"
+					+ " WHERE username = ? ORDER BY \"start_time\" LIMIT 5");
+			
+			getLast5GamesStatement.setString(1, username);
+			ResultSet getLast5GamesResult = getLast5GamesStatement.executeQuery();
+			
+			ArrayList<Board> last5Games = new ArrayList<>();
+			
+			Board recentGamesSignalBoard = new Board();
+			recentGamesSignalBoard.setCommand(Command.RECENT_GAMES);
+			last5Games.add(recentGamesSignalBoard);
+			
+			while(getLast5GamesResult.next()) {
+				int gameID = getLast5GamesResult.getInt("game_id");
+				String player1 = getLast5GamesResult.getString("player1");
+				String player2 = getLast5GamesResult.getString("player2");
+				String winner = getLast5GamesResult.getString("winner");
+				Timestamp timeStart = getLast5GamesResult.getTimestamp("start_time");
+				Timestamp timeEnd = getLast5GamesResult.getTimestamp("end_time");
+				
+				Board databaseGame = new Board(gameID, player1, player2, winner, timeStart, timeEnd);
+				last5Games.add(databaseGame);				
+			}
+			return last5Games;
+			
+		} catch (IOException | SQLException e) {
+			e.printStackTrace();
+			return new ArrayList<>();
 		}
 	}
 	

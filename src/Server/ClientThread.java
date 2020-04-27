@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
+import Database.DatabaseInsert;
 import Database.DatabaseQuery;
 import Game.Board;
 import Game.Profile;
@@ -63,6 +65,10 @@ public class ClientThread extends Thread implements Runnable {
 						break;
 					case UPDATE:
 						updateGameServer(inputBoard);
+						break;
+					case RECENT_GAMES:
+						getRecentGames();
+						break;
 					default:
 						break;
 				}
@@ -75,9 +81,14 @@ public class ClientThread extends Thread implements Runnable {
 					case PASSWORD_CHECK:
 						passwordCheck(inputProfile);
 						break;
-					default:
+					case USERNAME_CHECK:
+						usernameCheck(inputProfile);
 						break;
-				
+					case NEW_PROFILE:
+						addNewProfile(inputProfile);
+						break;
+					default:
+						break;				
 				}
 			}
 		}
@@ -93,11 +104,23 @@ public class ClientThread extends Thread implements Runnable {
 		Boolean passwordCheckResult = DatabaseQuery.passwordCheck(profile);
 		if(passwordCheckResult) {
 			profile.setCommand(Command.CORRECT);
-			sendObjectToClient(profile);
 		}
+		sendObjectToClient(profile);
 	}
 	
-	void newGame(Board game) {
+	void usernameCheck(Profile profile) {
+		String username = profile.getUsername();
+		if(DatabaseQuery.usernameCheck(username)) {
+			profile.setCommand(Command.CORRECT);
+		}
+		sendObjectToClient(profile);
+	}
+	
+	void addNewProfile(Profile profile) {
+		DatabaseInsert.addProfile(profile);
+	}
+	
+	void newGame(Board game){
 		server.createGame();
 	}
 	
@@ -117,6 +140,11 @@ public class ClientThread extends Thread implements Runnable {
 	public void updateGame(Board game) {
 		game.setCommand(Command.UPDATE);
 		sendObjectToClient(game);
+	}
+	
+	private void getRecentGames() {
+		ArrayList<Board> recentGames = DatabaseQuery.getLast5Games(profile.getUsername());
+		sendObjectToClient(recentGames);		
 	}
 	
 	private Object recieveObject() {

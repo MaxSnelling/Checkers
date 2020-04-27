@@ -1,6 +1,7 @@
 package Game;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 import Server.Command;
 
@@ -16,6 +17,9 @@ public class Board implements Serializable {
 	private int player1TileCount;
 	private int player2TileCount;
 	private int playersTurn;
+	private Timestamp timeStarted;
+	private Timestamp timeEnded;
+	private String winner;
 	private Command command;
 
 
@@ -26,6 +30,15 @@ public class Board implements Serializable {
 		player2TileCount = COUNTER_NUMBER;
 		fillBoard();
 		playersTurn = 1;
+	}
+	
+	public Board(int gameID, String player1, String player2, String winner, Timestamp timeStarted, Timestamp timeEnded) {
+		this.gameID = gameID;
+		this.player1 = player1;
+		this.player2 = player2;
+		this.winner = winner;	
+		this.timeStarted = timeStarted;
+		this.timeEnded = timeEnded;
 	}
 	
 	public Board() {
@@ -181,9 +194,15 @@ public class Board implements Serializable {
 	boolean upgradeCheck(int y) {
 		return y==0 || y==BOARD_SIZE-1;		
 	}
-
-	public static void main(String[] args) {
-		new Board(10);
+	
+	void changePlayersTurn() {
+		if(playersTurn == 1) 
+			playersTurn = 2;
+		else playersTurn = 1;
+	}
+	
+	public int getPlayersTurn() {
+		return playersTurn;
 	}
 
 	public String getPlayer1() {
@@ -209,6 +228,18 @@ public class Board implements Serializable {
 	public int getPlayer2TileCount() {
 		return player2TileCount;
 	}
+	
+	public Timestamp getTimeStarted() {
+		return timeStarted;
+	}
+
+	public Timestamp getTimeEnded() {
+		return timeEnded;
+	}
+
+	public String getWinner() {
+		return winner;
+	}
 
 	public Command getCommand() {
 		return command;
@@ -217,19 +248,9 @@ public class Board implements Serializable {
 	public void setCommand(Command command) {
 		this.command = command;
 	}
-
+	
 	public String toString() {
 		return gameID + "";
-	}
-	
-	void changePlayersTurn() {
-		if(playersTurn == 1) 
-			playersTurn = 2;
-		else playersTurn = 1;
-	}
-	
-	public int getPlayersTurn() {
-		return playersTurn;
 	}
 
 }

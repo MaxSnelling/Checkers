@@ -22,9 +22,9 @@ import javafx.util.Duration;
 
 public class GUIBoard extends Application {
 	private final int BOARD_XOFFSET = 100;
-	private final int BOARD_YOFFSET = 100;
+	private final int BOARD_YOFFSET = 150;
 	private final int TILE_SIZE = 50;
-	private final int INFORMATION_XOFFSET = BOARD_XOFFSET + 8*TILE_SIZE + 50;
+	private final int INFORMATION_XOFFSET = BOARD_XOFFSET + 8*TILE_SIZE + 100;
 	private final Color PLAYER1_COLOR = Color.DARKRED;
 	private final Color PLAYER2_COLOR = Color.DARKBLUE;
 	private Group root;
@@ -44,9 +44,9 @@ public class GUIBoard extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {		
 		Text titleText = new Text("Checkers");
-		titleText.setX(BOARD_XOFFSET+TILE_SIZE*4);
-		titleText.setY(BOARD_YOFFSET/2);
-		titleText.setFont(Font.font(16));
+		titleText.setX(GUIMain.SCENE_WIDTH/2 - 50);
+		titleText.setY(BOARD_YOFFSET*0.4);
+		titleText.setFont(GUIMain.headingFont);
 		root.getChildren().add(titleText);
 		
 		addBoardSquares();
@@ -57,12 +57,18 @@ public class GUIBoard extends Application {
 		addTurnText();
 		
 		Scene scene = new Scene(root, GUIMain.SCENE_WIDTH, GUIMain.SCENE_HEIGHT);
-		scene.setFill(Color.BEIGE);
+		scene.setFill(GUIMain.BACKGROUND_COLOUR);
+		GUIMain.scenes.add(scene);
 		stage.setScene(scene);
-		stage.show();
 	}
 
 	void addBoardSquares() {		
+		Rectangle border = new Rectangle(BOARD_XOFFSET, BOARD_YOFFSET, 8*TILE_SIZE, 8*TILE_SIZE);
+		border.setStrokeWidth(10);
+		border.setStroke(Color.MAROON);
+		border.setFill(Color.TRANSPARENT);
+		root.getChildren().add(border);		
+		
 		for(int i=0; i<8 ; i++) {
 			for(int j=0; j<8; j++) {
 				int startX = BOARD_XOFFSET + TILE_SIZE*i;
@@ -78,17 +84,17 @@ public class GUIBoard extends Application {
 				square.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
 					if(selectedCounterLocation != null) {
 						int counterXLocation = selectedCounterLocation.charAt(0) - 48;
-						int coutnerYLocation = selectedCounterLocation.charAt(2) - 48;
+						int counterYLocation = selectedCounterLocation.charAt(2) - 48;
 						int squareXLocation = square.getId().charAt(0) - 48;
 						int squareYLocation = square.getId().charAt(2) - 48;		
-						client.moveCounter(counterXLocation, coutnerYLocation, squareXLocation, squareYLocation);
+						client.moveCounter(counterXLocation, counterYLocation, squareXLocation, squareYLocation);
 						selectedCounterLocation = null;
 						redrawCounters();
 						}
 				});
 				root.getChildren().add(square);
 			}
-		}		
+		}	
 	}
 	
 	void addCounters() {
@@ -134,14 +140,16 @@ public class GUIBoard extends Application {
 		Text player1InfoText = new Text("Player 1: " + currentGame.getPlayer1() +
 				"\nRemaining Counters: " + currentGame.getPlayer1TileCount());
 		player1InfoText.setX(INFORMATION_XOFFSET);
-		player1InfoText.setY(BOARD_YOFFSET);
+		player1InfoText.setY(BOARD_YOFFSET + 100);
 		player1InfoText.setFill(PLAYER1_COLOR);
+		player1InfoText.setFont(GUIMain.standardFont);
 		
 		Text player2InfoText = new Text("Player 2: " + client.getCurrentGame().getPlayer2() +
 				"\nRemaining Counters: " + currentGame.getPlayer2TileCount());
 		player2InfoText.setX(INFORMATION_XOFFSET);
-		player2InfoText.setY(BOARD_YOFFSET + 100);
+		player2InfoText.setY(BOARD_YOFFSET + 150);
 		player2InfoText.setFill(PLAYER2_COLOR);
+		player2InfoText.setFont(GUIMain.standardFont);
 		
 		gameInformation.add(player1InfoText);
 		gameInformation.add(player2InfoText);
@@ -153,9 +161,10 @@ public class GUIBoard extends Application {
 		int playerNumber = client.getPlayerNumber();	
 		
 		Text playerText = new Text();
-		playerText.setX(GUIMain.SCENE_WIDTH/2);
-		playerText.setY(50);
+		playerText.setX(INFORMATION_XOFFSET);
+		playerText.setY(BOARD_YOFFSET);
 		playerText.setTextAlignment(TextAlignment.CENTER);	
+		playerText.setFont(GUIMain.standardFont);
 		
 		if(playerNumber == 1) {
 			playerText.setText("You are player 1");
@@ -173,15 +182,16 @@ public class GUIBoard extends Application {
 		int playerNumber = client.getPlayerNumber();
 		
 		turnText = new Text();
-		turnText.setX(GUIMain.SCENE_WIDTH/2);
-		turnText.setY(BOARD_YOFFSET + TILE_SIZE*8 + 50);
+		turnText.setX(INFORMATION_XOFFSET);
+		turnText.setY(BOARD_YOFFSET + TILE_SIZE*8);
 		turnText.setTextAlignment(TextAlignment.CENTER);
+		turnText.setFont(GUIMain.standardFont);
 		
 		
 		if(playersTurn == playerNumber) {
-			turnText.setText("It is your turn");
+			turnText.setText("It's your turn");
 		} else {
-			turnText.setText("Waiting for opponents move...");
+			turnText.setText("Waiting for opponent");
 		}
 		
 		root.getChildren().add(turnText);		

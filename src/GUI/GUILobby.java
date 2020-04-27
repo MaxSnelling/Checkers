@@ -20,8 +20,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -44,40 +44,57 @@ public class GUILobby extends Application {
 	public void start(Stage stage) throws Exception {
 		this.stage = stage;
 		Group root = new Group();
-		ObservableList<Node> rootChildren = root.getChildren();
 
 		Text lobbyTitle = new Text("Active Games");
-		lobbyTitle.setFont(Font.font(16));
+		lobbyTitle.setFont(GUIMain.headingFont);
 		Button joinGameButton = new Button("Join Game");
 		Button createGameButton = new Button("Create Game");
+		Button viewProfileButton = new Button("View Profle");
+		Button logOutButton = new Button("Log Out");
 
 		createGameButton.setOnAction(eventHandlerCreateGame);		
 		joinGameButton.setOnAction(eventHandlerJoinGame);
+		viewProfileButton.setOnAction(eventHandlerViewProfile);
+		logOutButton.setOnAction(eventHandlerLogOut);
 		
 		gamesTable = createLobbyTable();	
-		
-		client.startObjectInThread();
-		createLobbyRefresher();
 
 		GridPane grid = GUIMain.createGrid();
-		grid.add(lobbyTitle, 0, 0);	
+		grid.add(lobbyTitle, 0, 0);
+		grid.add(GUIMain.emptyText(), 0, 1);
 		grid.add(joinGameButton, 0, 2);
-		grid.add(createGameButton, 1, 2);		
+		grid.add(createGameButton, 1, 2);	
+		grid.add(viewProfileButton, 2, 2);
 		grid.add(gamesTable, 0, 3);
+		grid.add(logOutButton, 0, 4);
 		
 		GridPane.setHalignment(lobbyTitle, HPos.CENTER);
-		GridPane.setConstraints(lobbyTitle, 0, 0, 2, 1);
-		GridPane.setHalignment(createGameButton, HPos.RIGHT);
-		GridPane.setConstraints(gamesTable, 0, 3, 2, 1);
-//		GridPane.setHgrow(, Priority.ALWAYS);
-//		GridPane.setVgrow(, Priority.ALWAYS);
+		GridPane.setColumnSpan(lobbyTitle, 3);
+		GridPane.setHalignment(joinGameButton, HPos.CENTER);
+		GridPane.setHalignment(createGameButton, HPos.CENTER);
+		GridPane.setHalignment(viewProfileButton, HPos.CENTER);
+		GridPane.setColumnSpan(gamesTable, 3);
+//		grid.gridLinesVisibleProperty().set(true);
 		
-		rootChildren.add(grid);
+        ColumnConstraints colConst0 = new ColumnConstraints();
+        ColumnConstraints colConst1 = new ColumnConstraints();
+        ColumnConstraints colConst2 = new ColumnConstraints();
+        colConst0.setPercentWidth(25);
+        colConst1.setPercentWidth(25);
+        colConst2.setPercentWidth(25);
+        grid.getColumnConstraints().add(colConst0);
+        grid.getColumnConstraints().add(colConst1);
+        grid.getColumnConstraints().add(colConst2);
+		
+        root.getChildren().add(grid);
+        
+        client.startObjectInThread();
+		createLobbyRefresher();
 		
 		Scene scene = new Scene(root, GUIMain.SCENE_WIDTH, GUIMain.SCENE_HEIGHT);
-		scene.setFill(Color.BISQUE);
+		scene.setFill(GUIMain.BACKGROUND_COLOUR);
+		GUIMain.scenes.add(scene);
 		stage.setScene(scene);
-		stage.show();
 	}
 	
 	public void resetGamesTable() {
@@ -117,7 +134,6 @@ public class GUILobby extends Application {
 	
 	private final EventHandler<ActionEvent> eventHandlerCreateGame = e -> {
 		client.createGame();
-		resetGamesTable();
 	};
 	
 	private final EventHandler<ActionEvent> eventHandlerJoinGame = e -> {
@@ -130,6 +146,15 @@ public class GUILobby extends Application {
 		} else {				
 			System.out.println("No Game Selected");
 		}	
+	};
+	
+	private final EventHandler<ActionEvent> eventHandlerViewProfile = e -> {
+		GUIMain.openProfilePage(stage);
+	};
+	
+	private final EventHandler<ActionEvent> eventHandlerLogOut = e -> {
+		GUIMain.showPreviousScene(stage);
+		client.stopObjectInThread();
 	};
 	
 	private void threadSleep() {

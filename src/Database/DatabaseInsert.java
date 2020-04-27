@@ -24,8 +24,7 @@ public class DatabaseInsert {
 			addProfileStatement.setDate(5, profile.getDateOfBirth());
 			addProfileStatement.setString(6, profile.getEmailAddress());
 			
-			addProfileStatement.execute();
-			
+			addProfileStatement.execute();			
 		} catch (IOException | SQLException e) {
 			e.printStackTrace();
 		}
@@ -42,7 +41,7 @@ public class DatabaseInsert {
 			getGameIDResult.next();
 			int newGameID = getGameIDResult.getInt("max");
 			
-			return new Board(newGameID);			
+			return new Board(newGameID);				
 		} catch (IOException | SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -56,6 +55,8 @@ public class DatabaseInsert {
 					"INSERT INTO user_games(user_ID, game_ID) VALUES (?,?)");
 			insertUserGameStatement.setInt(1, userID);
 			insertUserGameStatement.setInt(2, gameID);
+			
+			insertUserGameStatement.execute();
 		} catch (IOException | SQLException e) {
 			e.printStackTrace();
 		}

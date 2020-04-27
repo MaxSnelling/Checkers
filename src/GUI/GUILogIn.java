@@ -1,6 +1,5 @@
 package GUI;
 
-import Database.DatabaseQuery;
 import Game.Profile;
 import Server.Client;
 import javafx.application.Application;
@@ -12,7 +11,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -22,9 +20,7 @@ public class GUILogIn extends Application {
 	TextField passwordField;
 	public Stage stage;
 	private Client client;
-
-
-
+	
 	public GUILogIn(Client client) {
 		this.client = client;
 	}
@@ -40,12 +36,12 @@ public class GUILogIn extends Application {
 		Text titleText = new Text("Checkers");
 		Text usernameText = new Text("Username: ");
 		Text passwordText = new Text("Password: ");
-		Button logInButton = new Button("Log in");
-		Button signUpButton = new Button("Sign up");
+		Button logInButton = new Button("Log In");
+		Button signUpButton = new Button("Sign Up");
 		usernameField = new TextField();
 		passwordField = new TextField();
 		
-		titleText.setFont(Font.font(16));
+		titleText.setFont(GUIMain.headingFont);
 		
 		logInButton.setOnAction(eventHandlerLogIn);	
 		signUpButton.setOnAction(eventHandlerSignUp);
@@ -55,17 +51,18 @@ public class GUILogIn extends Application {
 		grid.add(usernameField, 1, 2);
 		grid.add(passwordText, 0, 3);
 		grid.add(passwordField, 1,3);
-		grid.add(logInButton, 0, 4);
-		grid.add(signUpButton, 1, 4);
+		grid.add(signUpButton, 0, 4);
+		grid.add(logInButton, 1, 4);		
 		
 		GridPane.setConstraints(titleText, 0, 0, 2, 1);
 		GridPane.setHalignment(titleText, HPos.CENTER);
-		GridPane.setHalignment(logInButton, HPos.RIGHT);
+		GridPane.setHalignment(signUpButton, HPos.RIGHT);
 		
 		root.getChildren().add(grid);
 
 		Scene scene = new Scene(root, GUIMain.SCENE_WIDTH, GUIMain.SCENE_HEIGHT);
-		scene.setFill(Color.BISQUE);
+		scene.setFill(GUIMain.BACKGROUND_COLOUR);
+		GUIMain.scenes.add(scene);
 		stage.setScene(scene);
 		stage.show();
 	}

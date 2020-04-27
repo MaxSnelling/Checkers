@@ -16,7 +16,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -35,10 +34,9 @@ public class GUISignUp extends Application {
 	public GUISignUp(Client client) {
 		this.client = client;
 	}
-
+	
 	@Override
 	public void start(Stage stage) throws Exception {
-		System.out.println(stage);
 		this.stage = stage;
 		stage.setTitle("Checkers Sign Up");
 		Group root = new Group();
@@ -61,12 +59,14 @@ public class GUISignUp extends Application {
 		passwordField = new TextField();
 		rePasswordField = new TextField();
 		Button signUpButton = new Button("Sign up");
+		Button backButton = new Button("Back");
 		
 		titleText.setFont(Font.font(16));
 		signUpButton.setOnAction(eventHandlerSignUp);
+		backButton.setOnAction(eventHandlerBack);
 		
 		grid.add(titleText, 0, 0);
-		grid.add(emptyText(), 0, 1);
+		grid.add(GUIMain.emptyText(), 0, 1);
 		grid.add(firstNameText, 0, 2);
 		grid.add(firstNameField, 1, 2);
 		grid.add(lastNameText, 0, 3);
@@ -81,20 +81,21 @@ public class GUISignUp extends Application {
 		grid.add(passwordField, 1, 7);
 		grid.add(rePasswordText, 0, 8);
 		grid.add(rePasswordField, 1, 8);	
-		grid.add(emptyText(), 0, 9);
-		grid.add(signUpButton, 0, 10);
+		grid.add(GUIMain.emptyText(), 0, 9);
+		grid.add(signUpButton, 1, 10);
+		grid.add(backButton, 0, 10);
+		
 		
 		GridPane.setConstraints(titleText, 0, 0, 2, 1);
 		GridPane.setHalignment(titleText, HPos.CENTER);
-		GridPane.setConstraints(signUpButton, 0, 9, 2, 1);
-		GridPane.setHalignment(signUpButton, HPos.CENTER);
+		GridPane.setHalignment(backButton, HPos.CENTER);
+		GridPane.setHalignment(signUpButton, HPos.CENTER);		
 		
-		root.getChildren().add(grid);
-		
+		root.getChildren().add(grid);		
 		Scene scene = new Scene(root, GUIMain.SCENE_WIDTH, GUIMain.SCENE_HEIGHT);
-		scene.setFill(Color.BISQUE);
+		scene.setFill(GUIMain.BACKGROUND_COLOUR);
+		GUIMain.scenes.add(scene);
 		stage.setScene(scene);
-		stage.show();		
 	}	
 	
 	private final EventHandler<ActionEvent> eventHandlerSignUp = e -> {
@@ -107,10 +108,11 @@ public class GUISignUp extends Application {
 		String emailAddressInput = emailAddressField.getText();
 		
 		if(passwordInput.equals(rePasswordInput) ) {			
-			if(DatabaseQuery.usernameCheck(usernameInput)) {
+			if(client.usernameCheck(usernameInput)) {
+
 				Profile inputProfile = new Profile(usernameInput, firstNameInput, lastNameInput, 
 	        									passwordInput, dateOfBirthInput, emailAddressInput);
-				DatabaseInsert.addProfile(inputProfile);
+				client.addProfileToDatabase(inputProfile);
 				
 				GUIMain.openLogInPage(stage);
 			} else {
@@ -118,14 +120,11 @@ public class GUISignUp extends Application {
 			}
 		} else {
 			System.out.println("Passwords don't match");
-		}
-		
+		}		
     };
-	
-	private Text emptyText() {
-		return new Text("");
-	}
-	
-	
+    
+    private final EventHandler<ActionEvent> eventHandlerBack = e -> {
+		GUIMain.showPreviousScene(stage);
+    };	
 
 }
