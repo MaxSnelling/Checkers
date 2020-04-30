@@ -24,6 +24,7 @@ public class Client implements Serializable {
 	private ArrayList<Board> boardList;
 	private ArrayList<Board> recentGames;
 	private int playerNumber;
+	private boolean inGame;
 	private ObjectInThread objectInThread;
 	
 	public Client() {
@@ -71,7 +72,7 @@ public class Client implements Serializable {
 	
 	public void logIn(Profile profile) {
 		this.profile = profile;
-		profile.setCommand(Command.LOGIN);
+		profile.setCommand(Command.LOG_IN);
 		sendObjectToServer(profile);
 	}
 	
@@ -96,6 +97,12 @@ public class Client implements Serializable {
 		sendObjectToServer(profile);
 	}
 	
+	public void logOut() {
+		profile.setCommand(Command.LOG_OUT);
+		sendObjectToServer(profile);
+		disconnectServer();
+	}
+	
 	public void createGame() {
 		Board messageBoard = new Board();
 		messageBoard.setCommand(Command.NEW_GAME);
@@ -106,6 +113,7 @@ public class Client implements Serializable {
 		playerNumber = game.addPlayer(this.profile.getUsername());
 		game.setCommand(Command.JOIN_GAME);
 		sendObjectToServer(game);
+		inGame = true;
 	}
 	
 	public void moveCounter(int currentX, int currentY, int newX, int newY) {
@@ -130,7 +138,7 @@ public class Client implements Serializable {
 	}
 	
 	public void getActiveGames(){
-		Board messageBoard = new Board(0);
+		Board messageBoard = new Board();
 		messageBoard.setCommand(Command.GET_GAMES);
 		sendObjectToServer(messageBoard);
 	}
@@ -139,6 +147,10 @@ public class Client implements Serializable {
 		Board messageBoard = new Board();
 		messageBoard.setCommand(Command.RECENT_GAMES);
 		sendObjectToServer(messageBoard);
+	}
+	
+	public void endGame() {
+		inGame = false;
 	}
 	
 	private<E> void sendObjectToServer(E object) {
@@ -155,16 +167,8 @@ public class Client implements Serializable {
 		try {
 			return (Profile) in.readObject();
 		} catch (ClassNotFoundException | IOException e) {
-			threadWait();
-		}
-		return null;
-	}
-	
-	void threadWait() {
-		try {
-			Thread.sleep(10);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
+			e.printStackTrace();
+			return null;
 		}
 	}
 	
@@ -202,6 +206,10 @@ public class Client implements Serializable {
 	
 	public void updateProfile(Profile profile) {
 		this.profile = profile;
+	}
+	
+	public boolean isPlaying() {
+		return inGame;
 	}
 
 }

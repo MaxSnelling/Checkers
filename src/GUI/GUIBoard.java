@@ -1,20 +1,21 @@
 package GUI;
 
 import java.util.ArrayList;
-
 import Game.Board;
 import Server.Client;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -29,8 +30,10 @@ public class GUIBoard extends Application {
 	private final Color PLAYER2_COLOR = Color.DARKBLUE;
 	private Group root;
 	private Client client;
+	private Stage stage;
 	private ArrayList<Circle> counters;
 	private ArrayList<Text> gameInformation;
+	private Timeline counterRefresher;
 	private String selectedCounterLocation;
 	private Text turnText;
 	
@@ -43,18 +46,43 @@ public class GUIBoard extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {		
+		this.stage = stage;
 		Text titleText = new Text("Checkers");
 		titleText.setX(GUIMain.SCENE_WIDTH/2 - 50);
 		titleText.setY(BOARD_YOFFSET*0.4);
 		titleText.setFont(GUIMain.headingFont);
+		
+		Button backButton = new Button("Back");
+		backButton.setLayoutX(BOARD_XOFFSET);
+		backButton.setLayoutY(BOARD_YOFFSET + TILE_SIZE*9);
+		backButton.setOnAction(eventHandlerBack);
+		
+		Text player1InfoText = new Text("Player 1: \nRemaining Counters: ");
+		Text player2InfoText = new Text("Player 2: \nRemaining Counters: ");
+		player1InfoText.setFont(GUIMain.boldFont);
+		player2InfoText.setFont(GUIMain.boldFont);		
+		player1InfoText.setX(INFORMATION_XOFFSET);
+		player1InfoText.setY(BOARD_YOFFSET + 100);
+		player2InfoText.setX(INFORMATION_XOFFSET);
+		player2InfoText.setY(BOARD_YOFFSET + 200);
+		
+		Rectangle informationBox = new Rectangle(INFORMATION_XOFFSET-10, BOARD_YOFFSET, 250, 8*TILE_SIZE);
+		informationBox.setStrokeWidth(3);
+		informationBox.setStroke(Color.MAROON);
+		informationBox.setFill(Color.BLANCHEDALMOND);		
+		
+		root.getChildren().add(informationBox);
 		root.getChildren().add(titleText);
+		root.getChildren().add(backButton);
+		root.getChildren().add(player1InfoText);
+		root.getChildren().add(player2InfoText);
 		
 		addBoardSquares();
 		addCounters();
 		createCounterRefresher();
 		addGameInformationText();
 		addPlayerText();
-		addTurnText();
+		addTurnInformationText();
 		
 		Scene scene = new Scene(root, GUIMain.SCENE_WIDTH, GUIMain.SCENE_HEIGHT);
 		scene.setFill(GUIMain.BACKGROUND_COLOUR);
@@ -62,7 +90,7 @@ public class GUIBoard extends Application {
 		stage.setScene(scene);
 	}
 
-	void addBoardSquares() {		
+	private void addBoardSquares() {		
 		Rectangle border = new Rectangle(BOARD_XOFFSET, BOARD_YOFFSET, 8*TILE_SIZE, 8*TILE_SIZE);
 		border.setStrokeWidth(10);
 		border.setStroke(Color.MAROON);
@@ -82,7 +110,7 @@ public class GUIBoard extends Application {
 				square.setId(i + "," + j);
 				
 				square.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-					if(selectedCounterLocation != null) {
+					if(selectedCounterLocation != null && client.isPlaying()) {
 						int counterXLocation = selectedCounterLocation.charAt(0) - 48;
 						int counterYLocation = selectedCounterLocation.charAt(2) - 48;
 						int squareXLocation = square.getId().charAt(0) - 48;
@@ -97,7 +125,7 @@ public class GUIBoard extends Application {
 		}	
 	}
 	
-	void addCounters() {
+	private void addCounters() {		
 		int[][] boardState = client.getCurrentGame().getTiles();
 		for(int i=0; i<8 ; i++) {
 			for(int j=0; j<8; j++) {
@@ -132,29 +160,47 @@ public class GUIBoard extends Application {
 				}
 			}
 		}
+		if(!client.isPlaying()) {
+			counterRefresher.stop();
+			System.out.println("Game ended");
+		}
 	}
 	
 	private void addGameInformationText() {
 		Board currentGame = client.getCurrentGame();
 		
-		Text player1InfoText = new Text("Player 1: " + currentGame.getPlayer1() +
-				"\nRemaining Counters: " + currentGame.getPlayer1TileCount());
-		player1InfoText.setX(INFORMATION_XOFFSET);
-		player1InfoText.setY(BOARD_YOFFSET + 100);
-		player1InfoText.setFill(PLAYER1_COLOR);
-		player1InfoText.setFont(GUIMain.standardFont);
+		Text username1Text = new Text(currentGame.getPlayer1());
+		Text countersRemaining1Text = new Text(currentGame.getPlayer1TileCount() + "");
 		
-		Text player2InfoText = new Text("Player 2: " + client.getCurrentGame().getPlayer2() +
-				"\nRemaining Counters: " + currentGame.getPlayer2TileCount());
-		player2InfoText.setX(INFORMATION_XOFFSET);
-		player2InfoText.setY(BOARD_YOFFSET + 150);
-		player2InfoText.setFill(PLAYER2_COLOR);
-		player2InfoText.setFont(GUIMain.standardFont);
+		username1Text.setX(INFORMATION_XOFFSET + 90);
+		username1Text.setY(BOARD_YOFFSET + 100);
+		username1Text.setFill(PLAYER1_COLOR);
+		username1Text.setFont(GUIMain.standardFont);
+		countersRemaining1Text.setX(INFORMATION_XOFFSET + 200);
+		countersRemaining1Text.setY(BOARD_YOFFSET + 120);
+		countersRemaining1Text.setFill(PLAYER1_COLOR);
+		countersRemaining1Text.setFont(GUIMain.standardFont);
 		
-		gameInformation.add(player1InfoText);
-		gameInformation.add(player2InfoText);
-		root.getChildren().add(player1InfoText);
-		root.getChildren().add(player2InfoText);
+		Text username2Text = new Text(currentGame.getPlayer2());
+		Text countersRemaining2Text = new Text(currentGame.getPlayer2TileCount() + "");
+		
+		username2Text.setX(INFORMATION_XOFFSET + 90);
+		username2Text.setY(BOARD_YOFFSET + 200);
+		username2Text.setFill(PLAYER2_COLOR);
+		username2Text.setFont(GUIMain.standardFont);
+		countersRemaining2Text.setX(INFORMATION_XOFFSET + 200);
+		countersRemaining2Text.setY(BOARD_YOFFSET + 220);
+		countersRemaining2Text.setFill(PLAYER2_COLOR);
+		countersRemaining2Text.setFont(GUIMain.standardFont);
+		
+		gameInformation.add(username1Text);
+		gameInformation.add(username2Text);
+		gameInformation.add(countersRemaining1Text);
+		gameInformation.add(countersRemaining2Text);
+		root.getChildren().add(username1Text);
+		root.getChildren().add(username2Text);
+		root.getChildren().add(countersRemaining1Text);
+		root.getChildren().add(countersRemaining2Text);
 	}
 	
 	private void addPlayerText() {
@@ -162,7 +208,7 @@ public class GUIBoard extends Application {
 		
 		Text playerText = new Text();
 		playerText.setX(INFORMATION_XOFFSET);
-		playerText.setY(BOARD_YOFFSET);
+		playerText.setY(BOARD_YOFFSET + 20);
 		playerText.setTextAlignment(TextAlignment.CENTER);	
 		playerText.setFont(GUIMain.standardFont);
 		
@@ -177,33 +223,43 @@ public class GUIBoard extends Application {
 		root.getChildren().add(playerText);
 	}
 	
-	private void addTurnText() {
+	private void addTurnInformationText() {
 		int playersTurn = client.getCurrentGame().getPlayersTurn();
 		int playerNumber = client.getPlayerNumber();
 		
 		turnText = new Text();
 		turnText.setX(INFORMATION_XOFFSET);
-		turnText.setY(BOARD_YOFFSET + TILE_SIZE*8);
+		turnText.setY(BOARD_YOFFSET + TILE_SIZE*8 - 10);
 		turnText.setTextAlignment(TextAlignment.CENTER);
 		turnText.setFont(GUIMain.standardFont);
 		
-		
-		if(playersTurn == playerNumber) {
-			turnText.setText("It's your turn");
+		if(client.getCurrentGame().playing()) {
+			if(playersTurn == playerNumber) {
+				turnText.setText("It's your turn");
+			} else {
+				turnText.setText("Waiting for opponent");
+			}
 		} else {
-			turnText.setText("Waiting for opponent");
+			turnText.setFont(GUIMain.boldFont);
+			
+			String winner = client.getCurrentGame().getWinner();		
+			if(winner.equals(client.getProfile().getUsername())) {
+				turnText.setText("Congratualtions! You Won!");	
+			} else {
+				turnText.setText("Unfortunately, you have lost.");
+			}				
 		}
 		
 		root.getChildren().add(turnText);		
 	}
 	
 	private void createCounterRefresher() {
-		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(750), ev -> {
+		counterRefresher = new Timeline(new KeyFrame(Duration.millis(750), ev -> {
 	    	redrawCounters();
 	    	redrawGameInformation();
 	    }));
-	    timeline.setCycleCount(Animation.INDEFINITE);
-	    timeline.play();
+		counterRefresher.setCycleCount(Animation.INDEFINITE);
+		counterRefresher.play();
 	}
 	
 	private void redrawCounters() {
@@ -216,13 +272,14 @@ public class GUIBoard extends Application {
 		addGameInformationText();
 		
 		root.getChildren().remove(turnText);
-		addTurnText();
+		addTurnInformationText();
 	}
+	
+	private final EventHandler<ActionEvent> eventHandlerBack = e -> {
+		GUIMain.showPreviousScene(stage);		
+	};
 	
 	public void main(String[] args) {
 		launch();
 	}
-	
-	
-
 }

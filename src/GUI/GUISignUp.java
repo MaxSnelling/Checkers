@@ -2,8 +2,6 @@ package GUI;
 
 import java.sql.Date;
 
-import Database.DatabaseInsert;
-import Database.DatabaseQuery;
 import Game.Profile;
 import Server.Client;
 import javafx.application.Application;
@@ -16,13 +14,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class GUISignUp extends Application {
 	private Client client;
 	private Stage stage;	
+	Text usernameInUseText;
+	Text passwordsDontMatchText;
 	private TextField firstNameField;
 	private TextField lastNameField;
 	private TextField emailAddressField;
@@ -50,7 +49,9 @@ public class GUISignUp extends Application {
 		Text dateOfBirthText = new Text("Date of Birth: ");
 		Text usernameText = new Text("Username: ");
 		Text passwordText = new Text("Password: ");
-		Text rePasswordText = new Text("Re-enter Password: ");		
+		Text rePasswordText = new Text("Re-enter Password: ");
+		usernameInUseText = new Text("Username already in use");
+		passwordsDontMatchText = new Text("Passwords entered don't match");
 		firstNameField = new TextField();
 		lastNameField = new TextField();
 		emailAddressField = new TextField();
@@ -61,7 +62,18 @@ public class GUISignUp extends Application {
 		Button signUpButton = new Button("Sign up");
 		Button backButton = new Button("Back");
 		
-		titleText.setFont(Font.font(16));
+		titleText.setFont(GUIMain.headingFont);
+		firstNameText.setFont(GUIMain.standardFont);
+		lastNameText.setFont(GUIMain.standardFont);
+		emailAddressText.setFont(GUIMain.standardFont);
+		dateOfBirthText.setFont(GUIMain.standardFont);
+		usernameText.setFont(GUIMain.standardFont);
+		passwordText.setFont(GUIMain.standardFont);
+		rePasswordText.setFont(GUIMain.standardFont);
+		usernameInUseText.setFont(GUIMain.boldFont);
+		passwordsDontMatchText.setFont(GUIMain.boldFont);
+		usernameInUseText.setVisible(false);
+		passwordsDontMatchText.setVisible(false);
 		signUpButton.setOnAction(eventHandlerSignUp);
 		backButton.setOnAction(eventHandlerBack);
 		
@@ -84,12 +96,19 @@ public class GUISignUp extends Application {
 		grid.add(GUIMain.emptyText(), 0, 9);
 		grid.add(signUpButton, 1, 10);
 		grid.add(backButton, 0, 10);
+		grid.add(GUIMain.emptyText(), 0, 11);
+		grid.add(usernameInUseText, 0, 12);
+		grid.add(passwordsDontMatchText, 0, 13);
 		
 		
-		GridPane.setConstraints(titleText, 0, 0, 2, 1);
+		GridPane.setColumnSpan(titleText, 2);
+		GridPane.setColumnSpan(usernameInUseText, 2);
+		GridPane.setColumnSpan(passwordsDontMatchText, 2);
 		GridPane.setHalignment(titleText, HPos.CENTER);
 		GridPane.setHalignment(backButton, HPos.CENTER);
 		GridPane.setHalignment(signUpButton, HPos.CENTER);		
+		GridPane.setHalignment(usernameInUseText, HPos.CENTER);
+		GridPane.setHalignment(passwordsDontMatchText, HPos.CENTER);	
 		
 		root.getChildren().add(grid);		
 		Scene scene = new Scene(root, GUIMain.SCENE_WIDTH, GUIMain.SCENE_HEIGHT);
@@ -107,6 +126,9 @@ public class GUISignUp extends Application {
 		Date dateOfBirthInput = Date.valueOf(dateOfBirthField.getValue());
 		String emailAddressInput = emailAddressField.getText();
 		
+		passwordsDontMatchText.setVisible(false);
+		usernameInUseText.setVisible(false);
+		
 		if(passwordInput.equals(rePasswordInput) ) {			
 			if(client.usernameCheck(usernameInput)) {
 
@@ -116,10 +138,10 @@ public class GUISignUp extends Application {
 				
 				GUIMain.openLogInPage(stage);
 			} else {
-				System.out.println("Username already in use");
+				usernameInUseText.setVisible(true);
 			}
 		} else {
-			System.out.println("Passwords don't match");
+			passwordsDontMatchText.setVisible(true);
 		}		
     };
     

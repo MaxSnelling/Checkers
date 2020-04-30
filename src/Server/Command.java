@@ -2,7 +2,7 @@ package Server;
 
 public enum Command {
 	GET_GAMES,
-	LOGIN,
+	LOG_IN,
 	NEW_GAME,
 	JOIN_GAME,
 	UPDATE,
@@ -11,5 +11,7 @@ public enum Command {
 	RECENT_GAMES,
 	USERNAME_CHECK,
 	NEW_PROFILE,
-	NULL
+	NULL,
+	GAME_END,
+	LOG_OUT
 }

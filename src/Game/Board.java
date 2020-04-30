@@ -20,6 +20,7 @@ public class Board implements Serializable {
 	private Timestamp timeStarted;
 	private Timestamp timeEnded;
 	private String winner;
+	private boolean playing;
 	private Command command;
 
 
@@ -29,6 +30,7 @@ public class Board implements Serializable {
 		player1TileCount = COUNTER_NUMBER;
 		player2TileCount = COUNTER_NUMBER;
 		fillBoard();
+		playing = true;
 		playersTurn = 1;
 	}
 	
@@ -80,7 +82,7 @@ public class Board implements Serializable {
 			column = 0;
 		}
 
-		// TODO make board size work for odd numbers. make player 2 counters start from bottom of board
+		// TODO make board size work for odd numbers
 		for(int i=0; i<COUNTER_NUMBER; i++) {
 			tiles[row][column] = playerNumber;
 			if(column == BOARD_SIZE-1) {
@@ -135,6 +137,7 @@ public class Board implements Serializable {
 				System.out.println("Player " + playerNumber + " won!!!");
 			}
 			removeOpponentTile(playerNumber);
+			checkForWinner();
 		} else {
 			throw new IllegalArgumentException("Invalid take");
 		}
@@ -143,6 +146,16 @@ public class Board implements Serializable {
 	void removeOpponentTile(int playerNumber) {
 		if(playerNumber == 1) player2TileCount--;
 		else player1TileCount--;
+	}
+	
+	private void checkForWinner() {
+		if(player1TileCount == 0) {
+			winner = player2;
+			playing = false;
+		} else if(player2TileCount == 0) {
+			winner = player1;
+			playing = false;
+		}
 	}
 
 	boolean validTake(int playerNumber, int currentX, int currentY, int newX, int newY) {
@@ -239,6 +252,10 @@ public class Board implements Serializable {
 
 	public String getWinner() {
 		return winner;
+	}
+	
+	public boolean playing() {
+		return playing;
 	}
 
 	public Command getCommand() {

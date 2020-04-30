@@ -75,7 +75,7 @@ public class ClientThread extends Thread implements Runnable {
 			} else if(inputObject instanceof Profile) {
 				Profile inputProfile = (Profile) inputObject;
 				switch (inputProfile.getCommand()) {
-					case LOGIN:
+					case LOG_IN:
 						login(inputProfile);
 						break;
 					case PASSWORD_CHECK:
@@ -86,6 +86,9 @@ public class ClientThread extends Thread implements Runnable {
 						break;
 					case NEW_PROFILE:
 						addNewProfile(inputProfile);
+						break;
+					case LOG_OUT:
+						logOut(inputProfile);
 						break;
 					default:
 						break;				
@@ -120,6 +123,12 @@ public class ClientThread extends Thread implements Runnable {
 		DatabaseInsert.addProfile(profile);
 	}
 	
+	private void logOut(Profile profile) {
+		DatabaseQuery.logOutUser(profile.getUsername());
+		server.logOutClient(this);
+		disconnectClient();
+	}
+	
 	void newGame(Board game){
 		server.createGame();
 	}
@@ -145,6 +154,11 @@ public class ClientThread extends Thread implements Runnable {
 	private void getRecentGames() {
 		ArrayList<Board> recentGames = DatabaseQuery.getLast5Games(profile.getUsername());
 		sendObjectToClient(recentGames);		
+	}
+	
+	public void updateGameEnded(Board game) {
+		game.setCommand(Command.GAME_END);
+		sendObjectToClient(game);
 	}
 	
 	private Object recieveObject() {

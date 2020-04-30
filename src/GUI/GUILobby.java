@@ -1,20 +1,19 @@
 package GUI;
 
-import java.util.ArrayList;
 
+import java.util.ArrayList;
 import Game.Board;
 import Server.Client;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
@@ -22,7 +21,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -32,6 +30,7 @@ public class GUILobby extends Application {
 	private Client client;
 	private ArrayList<Board> currentBoardList;
 	private TableView<Board> gamesTable;
+	private Button reJoinButton;
 	private Timeline lobbyRefresher;
 
 
@@ -51,11 +50,13 @@ public class GUILobby extends Application {
 		Button createGameButton = new Button("Create Game");
 		Button viewProfileButton = new Button("View Profle");
 		Button logOutButton = new Button("Log Out");
+		reJoinButton = new Button("Re-join Game");
 
 		createGameButton.setOnAction(eventHandlerCreateGame);		
 		joinGameButton.setOnAction(eventHandlerJoinGame);
 		viewProfileButton.setOnAction(eventHandlerViewProfile);
 		logOutButton.setOnAction(eventHandlerLogOut);
+		reJoinButton.setOnAction(eventHandlerBack);
 		
 		gamesTable = createLobbyTable();	
 
@@ -67,6 +68,8 @@ public class GUILobby extends Application {
 		grid.add(viewProfileButton, 2, 2);
 		grid.add(gamesTable, 0, 3);
 		grid.add(logOutButton, 0, 4);
+		grid.add(reJoinButton, 1, 4);
+		reJoinButton.setVisible(false);
 		
 		GridPane.setHalignment(lobbyTitle, HPos.CENTER);
 		GridPane.setColumnSpan(lobbyTitle, 3);
@@ -139,6 +142,7 @@ public class GUILobby extends Application {
 	private final EventHandler<ActionEvent> eventHandlerJoinGame = e -> {
 		ReadOnlyObjectProperty<Board> selectedRow = gamesTable.getSelectionModel().selectedItemProperty();
 		if(selectedRow != null) {	
+			reJoinButton.setVisible(true);
 			client.joinGame(selectedRow.get());				
 			// Delay to make sure game is joined before creating game page
 			threadSleep();	
@@ -153,8 +157,11 @@ public class GUILobby extends Application {
 	};
 	
 	private final EventHandler<ActionEvent> eventHandlerLogOut = e -> {
-		GUIMain.showPreviousScene(stage);
+		client.logOut();
 		client.stopObjectInThread();
+		Platform.exit();
+		System.exit(0);
+		GUIMain.main(null);
 	};
 	
 	private void threadSleep() {
@@ -164,6 +171,10 @@ public class GUILobby extends Application {
 			e.printStackTrace();
 		}	
 	}
+	
+	private final EventHandler<ActionEvent> eventHandlerBack = e -> {
+		GUIMain.showPreviousScene(stage);
+	};
 
 	public static void main(String[] args) {
 		launch(args);

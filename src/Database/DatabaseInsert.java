@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import Game.Board;
 import Game.Profile;
@@ -33,8 +34,12 @@ public class DatabaseInsert {
 	public static Board createGame() {
 		try {
 			Connection connection = DatabaseConnect.connectDatabase();
-			PreparedStatement createGameStatement = connection.prepareStatement("INSERT INTO games DEFAULT VALUES");				
-			createGameStatement.execute();
+			PreparedStatement createGameStatement = connection.prepareStatement(
+					"INSERT INTO games(start_time) VALUES (?)");				
+			
+			Timestamp gameStartTime = new Timestamp(System.currentTimeMillis());
+			createGameStatement.setTimestamp(1, gameStartTime);
+			createGameStatement.execute();				
 			
 			PreparedStatement getGameIDStatement = connection.prepareStatement("SELECT MAX(game_ID) FROM games");				
 			ResultSet getGameIDResult = getGameIDStatement.executeQuery();

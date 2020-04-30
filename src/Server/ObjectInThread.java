@@ -46,22 +46,18 @@ public class ObjectInThread extends Thread {
 		try {
 			return client.getObjectInStream().readObject();
 		} catch (ClassNotFoundException | IOException e) {
-			threadWait();
-		}
-		return null;
-	}
-	
-	private void threadWait() {
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
+			System.out.println("Client connection closed");
+			return null;
+		}		
 	}
 	
 	private void boardInProtocol(Object objectIn) {
 		Board boardIn = (Board) objectIn;
 		client.updateBoard(boardIn);
+		
+		if(boardIn.getCommand().equals(Command.GAME_END)) {
+			client.endGame();
+		}
 	}
 	
 	private void boardListInProtocol(Object objectIn) {
@@ -86,5 +82,6 @@ public class ObjectInThread extends Thread {
 	
 	public void closeThread() {
 		running = false;
+		System.exit(0);
 	}
 }

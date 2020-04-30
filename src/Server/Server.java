@@ -77,7 +77,7 @@ public class Server {
 	void updatePlayersGame(int gameID) {
 		Board latestGame = getBoard(gameID);
 		ArrayList<ClientThread> gameClients = getGameClients(latestGame);
-		updateClientsGame(gameClients, latestGame);
+		updateClientsGame(gameClients, latestGame);		
 	}
 	
 	ArrayList<ClientThread> getGameClients(Board game) {
@@ -96,6 +96,10 @@ public class Server {
 	void updateClientsGame(ArrayList<ClientThread> clients, Board game) {
 		for(ClientThread client:clients) {
 			client.updateGame(game);
+			if(!game.playing()) {
+				client.updateGameEnded(game);
+				DatabaseQuery.updateGameEnd(game);
+			}
 		}
 	}
 	
@@ -108,7 +112,6 @@ public class Server {
 	}
 	
 	void updateGameServer(Board game) {
-		System.out.println("game" + game);
 		int gameIndex = -1;
 		for(int i=0; i<games.size(); i++) {
 			if(games.get(i).getGameID() == game.getGameID()) {
@@ -123,6 +126,11 @@ public class Server {
 		for(ClientThread client:clients) {
 			client.sendObjectToClient(games);
 		}
+	}
+	
+	void logOutClient(ClientThread client) {
+		clients.remove(client);
+		System.out.println("Disconnected Client");
 	}
 	
 	public ArrayList<Board> getGames() {

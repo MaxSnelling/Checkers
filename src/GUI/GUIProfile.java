@@ -7,7 +7,6 @@ import Server.Client;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.IntegerBinding;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -18,8 +17,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -78,13 +75,13 @@ public class GUIProfile extends Application {
 		grid.add(dateOfBirthLabel, 0, 5);
 		grid.add(dateOfBirthText, 1, 5);		
 		grid.add(recentGamesLabel, 0, 6);
-		grid.add(recentGamesTable, 1, 6);
+		grid.add(recentGamesTable, 0, 7);
 		grid.add(GUIMain.emptyText(), 0, 8);
 		grid.add(backButton, 0, 9);
 		
 		GridPane.setHalignment(titleText, HPos.CENTER);
 		GridPane.setColumnSpan(titleText, 2);
-//		GridPane.setColumnSpan(recentGamesTable, 2);
+		GridPane.setColumnSpan(recentGamesTable, 2);
 		
 		root.getChildren().add(grid);
 		

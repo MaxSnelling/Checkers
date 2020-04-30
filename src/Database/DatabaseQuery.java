@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import org.postgresql.util.PSQLException;
+
 import Game.Board;
 import Game.Profile;
 import Server.Command;
@@ -20,10 +22,14 @@ public class DatabaseQuery {
 			Connection connection = DatabaseConnect.connectDatabase();
 			PreparedStatement logInStatement = connection.prepareStatement(
 					"SELECT username, first_name, last_name, password, date_of_birth, email_address FROM users WHERE username = ?");
+			PreparedStatement loggedInUpdateStatement = connection.prepareStatement(
+					"UPDATE users SET logged_in = true WHERE username = ?");
 			
 			logInStatement.setString(1, profile.getUsername());
+			loggedInUpdateStatement.setString(1, profile.getUsername());
 			
 			ResultSet logInResult = logInStatement.executeQuery();
+			loggedInUpdateStatement.execute();
 			logInResult.next();
 			
 			String profileUsername = logInResult.getString("username");
@@ -41,8 +47,7 @@ public class DatabaseQuery {
 		} catch (IOException | SQLException e) {
 			e.printStackTrace();
 			return null;	
-		}
-		
+		}		
 	}
 	
 	public static boolean passwordCheck(Profile profile) {
@@ -54,10 +59,12 @@ public class DatabaseQuery {
 			passwordCheckStatement.setString(1, profile.getUsername());
 			ResultSet passwordCheckResult = passwordCheckStatement.executeQuery();
 			passwordCheckResult.next();
-			String serverProfilePassword = passwordCheckResult.getString("password");
-			
-			return profile.getPassword().equals(serverProfilePassword);			
-			
+			try {
+				String serverProfilePassword = passwordCheckResult.getString("password");
+				return profile.getPassword().equals(serverProfilePassword);			
+			} catch (PSQLException e) {
+				return false;
+			}			
 		} catch (IOException | SQLException e) {
 			e.printStackTrace();
 			return false;
@@ -132,7 +139,7 @@ public class DatabaseQuery {
 			PreparedStatement getLast5GamesStatement = connection.prepareStatement(
 					"SELECT game_id, player1, player2, winner, start_time, end_time FROM users JOIN "
 					+ "(SELECT * FROM user_games JOIN games using(game_id)) AS A USING(user_id)"
-					+ " WHERE username = ? ORDER BY \"start_time\" LIMIT 5");
+					+ " WHERE username = ? ORDER BY \"start_time\" DESC LIMIT 5");
 			
 			getLast5GamesStatement.setString(1, username);
 			ResultSet getLast5GamesResult = getLast5GamesStatement.executeQuery();
@@ -159,6 +166,38 @@ public class DatabaseQuery {
 		} catch (IOException | SQLException e) {
 			e.printStackTrace();
 			return new ArrayList<>();
+		}
+	}
+	
+	public static void updateGameEnd(Board board) {
+		try {
+			Connection connection = DatabaseConnect.connectDatabase();			
+			PreparedStatement updateGameEndStatement = connection.prepareStatement(
+					"UPDATE games SET end_time = ?, winner = ? where game_id = ?");
+			
+			Timestamp gameEndTime = new Timestamp(System.currentTimeMillis());
+			String winner = board.getWinner();
+			int gameID = board.getGameID();
+			
+			updateGameEndStatement.setTimestamp(1, gameEndTime);
+			updateGameEndStatement.setString(2, winner);
+			updateGameEndStatement.setInt(3, gameID);			
+			updateGameEndStatement.execute();			
+		} catch (IOException | SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void logOutUser(String username) {
+		try {
+			Connection connection = DatabaseConnect.connectDatabase();
+			PreparedStatement loggedOutUpdateStatement = connection.prepareStatement(
+					"UPDATE users SET logged_in = false WHERE username = ?");
+			
+			loggedOutUpdateStatement.setString(1, username);			
+			loggedOutUpdateStatement.execute();			
+		} catch (IOException | SQLException e) {
+			e.printStackTrace();
 		}
 	}
 	
