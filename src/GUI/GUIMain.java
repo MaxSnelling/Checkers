@@ -36,6 +36,12 @@ public class GUIMain extends Application {
 		launch(args);
 	}
 	
+	@Override
+	public void stop(){
+		if(client.getProfile() != null)
+			client.logOut();
+	}
+	
 	public static GridPane createGrid() {
 		GridPane grid = new GridPane();
 		grid.setPadding(new Insets(15));

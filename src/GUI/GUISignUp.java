@@ -20,8 +20,7 @@ import javafx.stage.Stage;
 public class GUISignUp extends Application {
 	private Client client;
 	private Stage stage;	
-	Text usernameInUseText;
-	Text passwordsDontMatchText;
+	private Text errorMessageText;
 	private TextField firstNameField;
 	private TextField lastNameField;
 	private TextField emailAddressField;
@@ -50,8 +49,7 @@ public class GUISignUp extends Application {
 		Text usernameText = new Text("Username: ");
 		Text passwordText = new Text("Password: ");
 		Text rePasswordText = new Text("Re-enter Password: ");
-		usernameInUseText = new Text("Username already in use");
-		passwordsDontMatchText = new Text("Passwords entered don't match");
+		errorMessageText = new Text();
 		firstNameField = new TextField();
 		lastNameField = new TextField();
 		emailAddressField = new TextField();
@@ -70,10 +68,7 @@ public class GUISignUp extends Application {
 		usernameText.setFont(GUIMain.standardFont);
 		passwordText.setFont(GUIMain.standardFont);
 		rePasswordText.setFont(GUIMain.standardFont);
-		usernameInUseText.setFont(GUIMain.boldFont);
-		passwordsDontMatchText.setFont(GUIMain.boldFont);
-		usernameInUseText.setVisible(false);
-		passwordsDontMatchText.setVisible(false);
+		errorMessageText.setFont(GUIMain.boldFont);
 		signUpButton.setOnAction(eventHandlerSignUp);
 		backButton.setOnAction(eventHandlerBack);
 		
@@ -97,18 +92,15 @@ public class GUISignUp extends Application {
 		grid.add(signUpButton, 1, 10);
 		grid.add(backButton, 0, 10);
 		grid.add(GUIMain.emptyText(), 0, 11);
-		grid.add(usernameInUseText, 0, 12);
-		grid.add(passwordsDontMatchText, 0, 13);
+		grid.add(errorMessageText, 0, 12);
 		
 		
 		GridPane.setColumnSpan(titleText, 2);
-		GridPane.setColumnSpan(usernameInUseText, 2);
-		GridPane.setColumnSpan(passwordsDontMatchText, 2);
+		GridPane.setColumnSpan(errorMessageText, 2);
 		GridPane.setHalignment(titleText, HPos.CENTER);
 		GridPane.setHalignment(backButton, HPos.CENTER);
 		GridPane.setHalignment(signUpButton, HPos.CENTER);		
-		GridPane.setHalignment(usernameInUseText, HPos.CENTER);
-		GridPane.setHalignment(passwordsDontMatchText, HPos.CENTER);	
+		GridPane.setHalignment(errorMessageText, HPos.CENTER);
 		
 		root.getChildren().add(grid);		
 		Scene scene = new Scene(root, GUIMain.SCENE_WIDTH, GUIMain.SCENE_HEIGHT);
@@ -126,8 +118,7 @@ public class GUISignUp extends Application {
 		Date dateOfBirthInput = Date.valueOf(dateOfBirthField.getValue());
 		String emailAddressInput = emailAddressField.getText();
 		
-		passwordsDontMatchText.setVisible(false);
-		usernameInUseText.setVisible(false);
+		errorMessageText.setText("");
 		
 		if(passwordInput.equals(rePasswordInput) ) {			
 			if(client.usernameCheck(usernameInput)) {
@@ -138,10 +129,10 @@ public class GUISignUp extends Application {
 				
 				GUIMain.openLogInPage(stage);
 			} else {
-				usernameInUseText.setVisible(true);
+				errorMessageText.setText("Username already in use");
 			}
 		} else {
-			passwordsDontMatchText.setVisible(true);
+			errorMessageText.setText("Passwords entered don't match");
 		}		
     };
     

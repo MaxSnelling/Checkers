@@ -13,5 +13,6 @@ public enum Command {
 	NEW_PROFILE,
 	NULL,
 	GAME_END,
-	LOG_OUT
+	LOG_OUT,
+	LOGGED_OUT_CHECK
 }

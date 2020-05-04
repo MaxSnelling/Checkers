@@ -37,6 +37,7 @@ public class Client implements Serializable {
 	public void getHostIP() {
 		try {
 			hostIP = InetAddress.getLocalHost();
+//			hostIP = InetAddress.getByAddress(new byte[] {(byte)1,(byte)1,(byte)1,(byte)1});
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
@@ -80,7 +81,13 @@ public class Client implements Serializable {
 		profile.setCommand(Command.PASSWORD_CHECK);
 		sendObjectToServer(profile);
 		Profile profileIn = recieveProfile();
-		System.out.println(profileIn);
+		return profileIn.getCommand().equals(Command.CORRECT);
+	}
+	
+	public boolean loggedOutCheck(Profile profile) {
+		profile.setCommand(Command.LOGGED_OUT_CHECK);
+		sendObjectToServer(profile);
+		Profile profileIn = recieveProfile();
 		return profileIn.getCommand().equals(Command.CORRECT);
 	}
 	

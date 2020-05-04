@@ -141,7 +141,7 @@ public class GUILobby extends Application {
 	
 	private final EventHandler<ActionEvent> eventHandlerJoinGame = e -> {
 		ReadOnlyObjectProperty<Board> selectedRow = gamesTable.getSelectionModel().selectedItemProperty();
-		if(selectedRow != null) {	
+		if(selectedRow != null && !client.isPlaying()) {	
 			reJoinButton.setVisible(true);
 			client.joinGame(selectedRow.get());				
 			// Delay to make sure game is joined before creating game page

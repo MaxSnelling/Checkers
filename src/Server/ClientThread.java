@@ -81,6 +81,9 @@ public class ClientThread extends Thread implements Runnable {
 					case PASSWORD_CHECK:
 						passwordCheck(inputProfile);
 						break;
+					case LOGGED_OUT_CHECK:
+						loggedOutCheck(inputProfile);
+						break;
 					case USERNAME_CHECK:
 						usernameCheck(inputProfile);
 						break;
@@ -97,15 +100,23 @@ public class ClientThread extends Thread implements Runnable {
 		}
 	}
 	
-	void login(Profile profile) {
+	private void login(Profile profile) {
 		Profile serverProfile = DatabaseQuery.logIn(profile);
 		this.profile = serverProfile;
 		sendObjectToClient(serverProfile);
 	}
 	
-	void passwordCheck(Profile profile) {
+	private void passwordCheck(Profile profile) {
 		Boolean passwordCheckResult = DatabaseQuery.passwordCheck(profile);
 		if(passwordCheckResult) {
+			profile.setCommand(Command.CORRECT);
+		}
+		sendObjectToClient(profile);
+	}
+	
+	private void loggedOutCheck(Profile profile) {
+		Boolean loggedOutCheckResult = DatabaseQuery.loggedOutCheck(profile.getUsername());
+		if(loggedOutCheckResult) {
 			profile.setCommand(Command.CORRECT);
 		}
 		sendObjectToClient(profile);

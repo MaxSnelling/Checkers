@@ -50,6 +50,24 @@ public class DatabaseQuery {
 		}		
 	}
 	
+	public static boolean loggedOutCheck(String username) {
+		Boolean loggedOutStatus = null;
+		try {
+			Connection connection = DatabaseConnect.connectDatabase();
+			PreparedStatement loggedInStatement = connection.prepareStatement(
+					"SELECT logged_in FROM users WHERE username = ?");
+			loggedInStatement.setString(1, username);
+			
+			ResultSet loggedInResult = loggedInStatement.executeQuery();
+			loggedInResult.next();
+			loggedOutStatus = !loggedInResult.getBoolean("logged_in");	
+			
+		} catch (IOException | SQLException e) {
+			e.printStackTrace();
+		}
+		return loggedOutStatus;
+	}
+	
 	public static boolean passwordCheck(Profile profile) {
 		try {
 			Connection connection = DatabaseConnect.connectDatabase();

@@ -81,7 +81,7 @@ public class GUILogIn extends Application {
 		Profile inputProfile = new Profile(usernameInput, passwordInput);
 		
 		incorrectDetailsText.setVisible(false);
-		if(client.passwordCheck(inputProfile)) {
+		if(client.passwordCheck(inputProfile) && client.loggedOutCheck(inputProfile)) {
 			client.logIn(inputProfile);
 			stage.setTitle("Checkers : " + usernameInput);
 			GUIMain.openLobbyPage(stage);	

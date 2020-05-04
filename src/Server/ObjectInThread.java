@@ -47,7 +47,7 @@ public class ObjectInThread extends Thread {
 			return client.getObjectInStream().readObject();
 		} catch (ClassNotFoundException | IOException e) {
 			System.out.println("Client connection closed");
-			return null;
+			return null; 
 		}		
 	}
 	
