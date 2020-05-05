@@ -5,6 +5,12 @@ import java.sql.Timestamp;
 
 import Server.Command;
 
+/**
+ * Stores game data and executes game logic. Stores
+ * insructions for Server-Client communication.
+ * @author Max Snelling
+ * @version 5/5/20
+ */
 public class Board implements Serializable {
 	private static final long serialVersionUID = 3L;
 	private final int BOARD_SIZE = 8;
@@ -34,7 +40,8 @@ public class Board implements Serializable {
 		playersTurn = 1;
 	}
 	
-	public Board(int gameID, String player1, String player2, String winner, Timestamp timeStarted, Timestamp timeEnded) {
+	public Board(int gameID, String player1, String player2, 
+			String winner, Timestamp timeStarted, Timestamp timeEnded) {
 		this.gameID = gameID;
 		this.player1 = player1;
 		this.player2 = player2;
@@ -191,6 +198,7 @@ public class Board implements Serializable {
 		return false;
 	}
 
+	// Checks that standard counters are moving forward
 	boolean validMoveStandard(int playerNumber, int currentX, int currentY, int newX, int newY) {
 		if(playerNumber == 1) {
 			return  currentY < newY;

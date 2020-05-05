@@ -5,6 +5,12 @@ import java.time.LocalDate;
 
 import Server.Command;
 
+/**
+ * Stores user data and stores messages for server-client
+ * communication.
+ * @author Max Snelling
+ * @version 5/5/20
+ */
 public class Profile implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private final String username;
