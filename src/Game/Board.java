@@ -13,7 +13,7 @@ public class Board implements Serializable {
 	private String player1;
 	private String player2;
 	private int gameID;
-	private int[][] tiles;
+	private int[][] boardState;
 	private int player1TileCount;
 	private int player2TileCount;
 	private int playersTurn;
@@ -26,7 +26,7 @@ public class Board implements Serializable {
 
 	public Board(int gameID) {		
 		this.gameID = gameID;
-		tiles = new int[BOARD_SIZE][BOARD_SIZE];
+		boardState = new int[BOARD_SIZE][BOARD_SIZE];
 		player1TileCount = COUNTER_NUMBER;
 		player2TileCount = COUNTER_NUMBER;
 		fillBoard();
@@ -51,8 +51,12 @@ public class Board implements Serializable {
 			player1 = newPlayer;
 			return 1;
 		} else if(player2 == null) {
-			player2 = newPlayer;
-			return 2;
+			if(!player1.equals(newPlayer)) {
+				player2 = newPlayer;
+				return 2;
+			} else {
+				throw new IllegalArgumentException("Player already in game");
+			}			
 		} else {
 			throw new IllegalArgumentException("Game is full");
 		}
@@ -84,7 +88,7 @@ public class Board implements Serializable {
 
 		// TODO make board size work for odd numbers
 		for(int i=0; i<COUNTER_NUMBER; i++) {
-			tiles[row][column] = playerNumber;
+			boardState[row][column] = playerNumber;
 			if(column == BOARD_SIZE-1) {
 				row++;
 				column = 0;
@@ -100,7 +104,7 @@ public class Board implements Serializable {
 		for(int i=0; i<BOARD_SIZE; i++) {
 			String out = "";
 			for(int j=0; j<BOARD_SIZE; j++) {
-				out += tiles[i][j] + " ";
+				out += boardState[i][j] + " ";
 			}
 			System.out.println(out);
 		}
@@ -111,8 +115,8 @@ public class Board implements Serializable {
 			if(Math.abs(currentX-newX)==2 && Math.abs(currentY-newY)==2) {
 				takeCounter(playerNumber, currentX, currentY, newX, newY);
 			} else if(validMove(playerNumber, currentX, currentY, newX, newY)) {
-				tiles[newY][newX] = tiles[currentY][currentX];
-				tiles[currentY][currentX] = 0;			
+				boardState[newY][newX] = boardState[currentY][currentX];
+				boardState[currentY][currentX] = 0;			
 				if(upgradeCheck(newY)) {
 					upgradeTile(newX, newY);
 				}
@@ -127,9 +131,9 @@ public class Board implements Serializable {
 
 	void takeCounter(int playerNumber, int currentX, int currentY, int newX, int newY) {
 		if(validTake(playerNumber, currentX, currentY, newX, newY)) {
-			tiles[newY][newX] = tiles[currentY][currentX];
-			tiles[currentY][currentX] = 0;
-			tiles[(currentY+newY)/2][(currentX+newX)/2] = 0;			
+			boardState[newY][newX] = boardState[currentY][currentX];
+			boardState[currentY][currentX] = 0;
+			boardState[(currentY+newY)/2][(currentX+newX)/2] = 0;			
 			if(upgradeCheck(newY)) {
 				upgradeTile(newX, newY);
 			}
@@ -159,11 +163,12 @@ public class Board implements Serializable {
 	}
 
 	boolean validTake(int playerNumber, int currentX, int currentY, int newX, int newY) {
-		if(playerNumber != tiles[(currentY+newY)/2][(currentX+newX)/2] &&
-				tiles[(currentY+newY)/2][(currentX+newX)/2] != 0 &&
-				tiles[newY][newX] == 0 &&
-				Math.abs(tiles[currentY][currentX]) == playerNumber) {
-			if(tiles[currentY][currentX] > 0) {
+		int takingCounter = boardState[(currentY+newY)/2][(currentX+newX)/2];
+		if(playerNumber != takingCounter &&
+				takingCounter != 0 &&
+				boardState[newY][newX] == 0 &&
+				Math.abs(boardState[currentY][currentX]) == playerNumber) {
+			if(boardState[currentY][currentX] > 0) {
 				return validMoveStandard(playerNumber, currentX, currentY, newX, newY);
 			} else {
 				return true;
@@ -174,15 +179,14 @@ public class Board implements Serializable {
 	}
 
 	boolean validMove(int playerNumber, int currentX, int currentY, int newX, int newY) {
-		if(Math.abs(tiles[currentY][currentX]) == playerNumber &&
-				tiles[newY][newX] == 0 &&
+		if(Math.abs(boardState[currentY][currentX]) == playerNumber &&
+				boardState[newY][newX] == 0 &&
 				Math.abs(currentX-newX) == 1 && 
 				Math.abs(currentY-newY) == 1) {
-			if(tiles[currentY][currentX] > 0) {
+			if(boardState[currentY][currentX] > 0) {
 				return validMoveStandard(playerNumber, currentX, currentY, newX, newY);
-			} else if(tiles[currentY][currentX] < 0) {
-				return true;
-			}
+			} else 
+				return boardState[currentY][currentX] < 0;
 		}
 		return false;
 	}
@@ -197,11 +201,11 @@ public class Board implements Serializable {
 
 	void upgradeTile(int x, int y) {
 		if(!tileUpgraded(x, y))
-			tiles[y][x] *= -1;
+			boardState[y][x] *= -1;
 	}
 
 	boolean tileUpgraded(int x, int y) {
-		return tiles[y][x] < 0; 
+		return boardState[y][x] < 0; 
 	}
 
 	boolean upgradeCheck(int y) {
@@ -230,8 +234,8 @@ public class Board implements Serializable {
 		return gameID;
 	}
 
-	public int[][] getTiles() {
-		return tiles;
+	public int[][] getBoardState() {
+		return boardState;
 	}
 
 	public int getPlayer1TileCount() {

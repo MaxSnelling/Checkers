@@ -21,7 +21,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class GUIProfile extends Application {
-	private Client client;
+	private final Client client;
 	private Stage stage;
 	
 	public GUIProfile(Client client) {

@@ -1,21 +1,20 @@
 package Server;
 
-import java.io.IOException;
-import java.net.Socket;
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
-
 import Database.DatabaseInsert;
 import Database.DatabaseQuery;
 import Game.Board;
 
+import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
 
 public class Server {
 	private final int port = 50000;
 	private ServerSocket serverSocket;
-	private ArrayList<ClientThread> clients;
-	private ArrayList<Board> games;
+	private final ArrayList<ClientThread> clients;
+	private final ArrayList<Board> games;
 	
 	public Server() {
 		clients = new ArrayList<>();

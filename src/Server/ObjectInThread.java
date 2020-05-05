@@ -7,7 +7,7 @@ import Game.Board;
 import Game.Profile;
 
 public class ObjectInThread extends Thread {
-	private Client client;
+	private final Client client;
 	private boolean running;
 	
 	public ObjectInThread(Client client) {
@@ -45,10 +45,11 @@ public class ObjectInThread extends Thread {
 	private Object getObject() {
 		try {
 			return client.getObjectInStream().readObject();
-		} catch (ClassNotFoundException | IOException e) {
-			System.out.println("Client connection closed");
-			return null; 
-		}		
+		} catch (ClassNotFoundException | IOException e) {			
+			closeThread();
+			return null;
+		}
+				
 	}
 	
 	private void boardInProtocol(Object objectIn) {
@@ -81,6 +82,7 @@ public class ObjectInThread extends Thread {
 	}
 	
 	public void closeThread() {
+		System.out.println("Client connection closed");
 		running = false;
 		System.exit(0);
 	}

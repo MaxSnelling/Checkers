@@ -28,11 +28,11 @@ public class GUIBoard extends Application {
 	private final int INFORMATION_XOFFSET = BOARD_XOFFSET + 8*TILE_SIZE + 100;
 	private final Color PLAYER1_COLOR = Color.DARKRED;
 	private final Color PLAYER2_COLOR = Color.DARKBLUE;
-	private Group root;
-	private Client client;
+	private final Group root;
+	private final Client client;
 	private Stage stage;
-	private ArrayList<Circle> counters;
-	private ArrayList<Text> gameInformation;
+	private final ArrayList<Circle> counters;
+	private final ArrayList<Text> gameInformation;
 	private Timeline counterRefresher;
 	private String selectedCounterLocation;
 	private Text turnText;
@@ -126,7 +126,7 @@ public class GUIBoard extends Application {
 	}
 	
 	private void addCounters() {		
-		int[][] boardState = client.getCurrentGame().getTiles();
+		int[][] boardState = client.getCurrentGame().getBoardState();
 		for(int i=0; i<8 ; i++) {
 			for(int j=0; j<8; j++) {
 				int centreX = BOARD_XOFFSET + TILE_SIZE*i + TILE_SIZE/2;

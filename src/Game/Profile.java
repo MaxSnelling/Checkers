@@ -7,10 +7,10 @@ import Server.Command;
 
 public class Profile implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private String username;
+	private final String username;
 	private String firstName;
 	private String lastName;
-	private String password;
+	private final String password;
 	private Date dateOfBirth;
 	private String emailAddress;
 	private Command command;
