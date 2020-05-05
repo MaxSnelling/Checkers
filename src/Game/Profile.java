@@ -1,7 +1,7 @@
 package Game;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.time.LocalDate;
 
 import Server.Command;
 
@@ -11,7 +11,7 @@ public class Profile implements Serializable {
 	private String firstName;
 	private String lastName;
 	private final String password;
-	private Date dateOfBirth;
+	private LocalDate dateOfBirth;
 	private String emailAddress;
 	private Command command;
 	
@@ -22,7 +22,7 @@ public class Profile implements Serializable {
 	}
 	
 	public Profile(String username, String firstName, String lastName,
-					String password, Date dateOfBirth, String emailAddress) {
+					String password, LocalDate dateOfBirth, String emailAddress) {
 		this.username = username;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -48,7 +48,7 @@ public class Profile implements Serializable {
 		return password;
 	}
 
-	public Date getDateOfBirth() {
+	public LocalDate getDateOfBirth() {
 		return dateOfBirth;
 	}
 	
@@ -62,6 +62,15 @@ public class Profile implements Serializable {
 	
 	public void setCommand(Command command) {
 		this.command = command;
+	}
+	
+	public boolean equalsTo(Profile otherProfile) {
+		return username.equals(otherProfile.getUsername()) &&
+				firstName.equals(otherProfile.getFirstName()) &&
+				lastName.equals(otherProfile.getLastName()) &&
+				password.equals(otherProfile.getPassword()) &&
+				dateOfBirth.equals(otherProfile.getDateOfBirth()) &&
+				emailAddress.equals(otherProfile.getEmailAddress());
 	}
 	
 }

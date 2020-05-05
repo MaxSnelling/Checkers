@@ -1,6 +1,7 @@
 package GUI;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 import Game.Profile;
 import Server.Client;
@@ -115,7 +116,7 @@ public class GUISignUp extends Application {
 		String lastNameInput = lastNameField.getText();		
 		String passwordInput = passwordField.getText();
 		String rePasswordInput = rePasswordField.getText();
-		Date dateOfBirthInput = Date.valueOf(dateOfBirthField.getValue());
+		LocalDate dateOfBirthInput = dateOfBirthField.getValue();
 		String emailAddressInput = emailAddressField.getText();
 		
 		errorMessageText.setText("");

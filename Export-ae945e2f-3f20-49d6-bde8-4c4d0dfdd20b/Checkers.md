@@ -32,8 +32,8 @@
 
 ### Screenshots
 
-![Checkers/Screenshot_from_2020-05-03_15-54-05.png](assets/Screenshot_from_2020-05-03_15-54-05.png)
+![Checkers/Screenshot_from_2020-05-03_15-54-05.png](Checkers/Screenshot_from_2020-05-03_15-54-05.png)
 
-![Checkers/Screenshot_from_2020-05-03_15-54-50.png](assets/Screenshot_from_2020-05-03_15-54-50.png)
+![Checkers/Screenshot_from_2020-05-03_15-54-50.png](Checkers/Screenshot_from_2020-05-03_15-54-50.png)
 
-![Checkers/Screenshot_from_2020-05-03_15-55-45.png](assets/Screenshot_from_2020-05-03_15-55-45.png)
+![Checkers/Screenshot_from_2020-05-03_15-55-45.png](Checkers/Screenshot_from_2020-05-03_15-55-45.png)

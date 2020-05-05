@@ -2,10 +2,13 @@ package Database;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+
+import org.postgresql.util.PSQLException;
 
 import Game.Board;
 import Game.Profile;
@@ -22,12 +25,11 @@ public class DatabaseInsert {
 			addProfileStatement.setString(2, profile.getFirstName());
 			addProfileStatement.setString(3, profile.getLastName());
 			addProfileStatement.setString(4, profile.getPassword());
-			addProfileStatement.setDate(5, profile.getDateOfBirth());
+			addProfileStatement.setDate(5, Date.valueOf(profile.getDateOfBirth()));
 			addProfileStatement.setString(6, profile.getEmailAddress());
 			
 			addProfileStatement.execute();			
 		} catch (IOException | SQLException e) {
-			e.printStackTrace();
 		}
 	}
 	

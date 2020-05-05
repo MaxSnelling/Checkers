@@ -2,11 +2,11 @@ package Database;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import org.postgresql.util.PSQLException;
@@ -36,7 +36,7 @@ public class DatabaseQuery {
 			String profileFirstName = logInResult.getString("first_name");
 			String profileLastName = logInResult.getString("last_name");
 			String profilePassword = logInResult.getString("password");
-			Date profileDateofBirth = logInResult.getDate("date_of_birth");
+			LocalDate profileDateofBirth = logInResult.getDate("date_of_birth").toLocalDate();
 			String profileEmailAddress = logInResult.getString("email_address");
 			
 			Profile serverProfile = new Profile(profileUsername, profileFirstName, profileLastName,
