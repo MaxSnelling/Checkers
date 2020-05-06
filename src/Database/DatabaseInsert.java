@@ -13,6 +13,12 @@ import org.postgresql.util.PSQLException;
 import Game.Board;
 import Game.Profile;
 
+/**
+ * Provides all database queries which insert data
+ * into tables
+ * @author Max Snelling
+ * @version 5/5/20
+ */
 public class DatabaseInsert {
 	
 	public static void addProfile(Profile profile) {

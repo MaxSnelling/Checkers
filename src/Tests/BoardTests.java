@@ -7,6 +7,11 @@ import org.junit.jupiter.api.Test;
 
 import Game.Board;
 
+/**
+ * Tests for Board class
+ * @author Max Snelling
+ * @version 5/5/20
+ */
 class BoardTests {
 	private Board board;
 	

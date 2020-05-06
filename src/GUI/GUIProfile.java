@@ -20,6 +20,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+/**
+ * Profile GUI page shown on application launch
+ * @author Max Snelling
+ * @version 5/5/20
+ */
 public class GUIProfile extends Application {
 	private final Client client;
 	private Stage stage;

@@ -5,8 +5,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Connects to Checkers database on host system.
+ * Database structure found in Checkers.sql
+ * @author Max Snelling
+ * @version 5/5/20
+ */
 public class DatabaseConnect {
-
 	public static Connection connectDatabase() throws IOException {
         String url = "jdbc:postgresql://localhost/checkers";
         String username = "checkers";

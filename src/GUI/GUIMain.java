@@ -14,6 +14,12 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+/**
+ * Launch class for GUI and provides page creation
+ * methods
+ * @author Max Snelling
+ * @version 5/5/20
+ */
 public class GUIMain extends Application {
 	public static final int SCENE_WIDTH = 1000;
 	public static final int SCENE_HEIGHT = 800;

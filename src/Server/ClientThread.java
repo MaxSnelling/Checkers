@@ -11,6 +11,12 @@ import Database.DatabaseQuery;
 import Game.Board;
 import Game.Profile;
 
+/**
+ * Server thread created for each client to allow
+ * for multiple client connetions
+ * @author Max Snelling
+ * @version 5/5/20
+ */
 public class ClientThread extends Thread implements Runnable {
 	private final Server server;
 	private final Socket socket;
@@ -124,7 +130,7 @@ public class ClientThread extends Thread implements Runnable {
 	
 	void usernameCheck(Profile profile) {
 		String username = profile.getUsername();
-		if(DatabaseQuery.usernameCheck(username)) {
+		if(DatabaseQuery.usernameAvailableCheck(username)) {
 			profile.setCommand(Command.CORRECT);
 		}
 		sendObjectToClient(profile);
@@ -135,7 +141,7 @@ public class ClientThread extends Thread implements Runnable {
 	}
 	
 	private void logOut(Profile profile) {
-		DatabaseQuery.logOutUser(profile.getUsername());
+		DatabaseQuery.logOut(profile.getUsername());
 		server.logOutClient(this);
 		disconnectClient();
 	}

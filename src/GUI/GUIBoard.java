@@ -21,6 +21,11 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * Board GUI page shown when in game
+ * @author Max Snelling
+ * @version 5/5/20
+ */
 public class GUIBoard extends Application {
 	private final int BOARD_XOFFSET = 100;
 	private final int BOARD_YOFFSET = 150;

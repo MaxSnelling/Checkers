@@ -24,7 +24,7 @@ CREATE TABLE "user_games" (
   PRIMARY KEY ("user_id", "game_id")
 );
 
-ALTER TABLE "user_games" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("user_id");
+ALTER TABLE "user_games" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("user_id") ON DELETE CASCADE;
 
-ALTER TABLE "user_games" ADD FOREIGN KEY ("game_id") REFERENCES "games" ("game_id");
+ALTER TABLE "user_games" ADD FOREIGN KEY ("game_id") REFERENCES "games" ("game_id") ON DELETE CASCADE;
 

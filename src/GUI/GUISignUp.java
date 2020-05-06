@@ -1,8 +1,5 @@
 package GUI;
 
-import java.sql.Date;
-import java.time.LocalDate;
-
 import Game.Profile;
 import Server.Client;
 import javafx.application.Application;
@@ -17,7 +14,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import java.time.LocalDate;
 
+/**
+ * Sign up GUI page available from log in page
+ * @author Max Snelling
+ * @version 5/5/20
+ */
 public class GUISignUp extends Application {
 	private Client client;
 	private Stage stage;	

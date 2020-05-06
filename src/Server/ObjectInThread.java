@@ -6,6 +6,12 @@ import java.util.ArrayList;
 import Game.Board;
 import Game.Profile;
 
+/**
+ * Receives objects on behalf of client as a
+ * thread to allow GUI to operate smoothly
+ * @author Max Snelling
+ * @version 5/5/20
+ */
 public class ObjectInThread extends Thread {
 	private final Client client;
 	private boolean running;

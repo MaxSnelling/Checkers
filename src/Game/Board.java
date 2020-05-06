@@ -7,7 +7,7 @@ import Server.Command;
 
 /**
  * Stores game data and executes game logic. Stores
- * insructions for Server-Client communication.
+ * instructions for Server-Client communication.
  * @author Max Snelling
  * @version 5/5/20
  */

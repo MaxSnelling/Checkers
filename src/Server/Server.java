@@ -10,6 +10,12 @@ import java.net.Socket;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
+/**
+ * Accepts connections to new clients and
+ * distributes updates to all clients
+ * @author Max Snelling
+ * @version 5/5/20
+ */
 public class Server {
 	private final int port = 50000;
 	private ServerSocket serverSocket;

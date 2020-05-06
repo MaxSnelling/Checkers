@@ -12,6 +12,12 @@ import java.util.ArrayList;
 import Game.Board;
 import Game.Profile;
 
+/**
+ * Creates connection with server on creation.
+ * Provides all communication methods needed for GUI.
+ * @author Max Snelling
+ * @version 5/5/20
+ */
 public class Client implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private final int port = 50000;

@@ -15,6 +15,11 @@ import Game.Board;
 import Game.Profile;
 import Server.Command;
 
+/**
+ * Provides all data amend and acquire methods
+ * @author Max Snelling
+ * @version 5/5/20
+ */
 public class DatabaseQuery {
 	
 	public static Profile logIn(Profile profile) {
@@ -89,7 +94,7 @@ public class DatabaseQuery {
 		}		
 	}
 	
-	public static boolean usernameCheck(String username) {
+	public static boolean usernameAvailableCheck(String username) {
 		try {
 			Connection connection = DatabaseConnect.connectDatabase();
 			PreparedStatement usernameCheckStatement = connection.prepareStatement(
@@ -206,7 +211,7 @@ public class DatabaseQuery {
 		}
 	}
 	
-	public static void logOutUser(String username) {
+	public static void logOut(String username) {
 		try {
 			Connection connection = DatabaseConnect.connectDatabase();
 			PreparedStatement loggedOutUpdateStatement = connection.prepareStatement(

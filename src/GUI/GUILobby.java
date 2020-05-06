@@ -1,6 +1,5 @@
 package GUI;
 
-
 import java.util.ArrayList;
 import Game.Board;
 import Server.Client;
@@ -25,6 +24,11 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * Lobby GUI page shown after logging in
+ * @author Max Snelling
+ * @version 5/5/20
+ */
 public class GUILobby extends Application {
 	private Stage stage;
 	private Client client;

@@ -15,6 +15,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+/**
+ * Log in GUI page shown on application launch
+ * @author Max Snelling
+ * @version 5/5/20
+ */
 public class GUILogIn extends Application {
 	TextField usernameField;
 	PasswordField passwordField;
