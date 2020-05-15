@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import Game.Board;
+import Game.Coordinate2D;
 
 /**
  * Tests for Board class
@@ -67,7 +68,7 @@ class BoardTests {
 	
 	@Test
 	void moveCounterTests() {
-		board.moveCounter(1, 3, 2, 4, 3);
+		board.moveCounter(1, new Coordinate2D(3,2), new Coordinate2D(4,3));
 		int[][] expectedBoard = {{0,1,0,1,0,1,0,1},
 								 {1,0,1,0,1,0,1,0},
 								 {0,1,0,0,0,1,0,1},
@@ -82,19 +83,19 @@ class BoardTests {
 		String expectedInvalidMoveMessage = "Invalid move";
 		
 		Exception wrongTurnException = assertThrows(IllegalArgumentException.class, () -> {
-			board.moveCounter(1, 5,2, 6,3);
+			board.moveCounter(1, new Coordinate2D(5,2), new Coordinate2D(6,3));
 	    });	 
 	    String actualWrongMessage = wrongTurnException.getMessage();	 
 	    assertTrue(actualWrongMessage.contains(expectedWrongTurnMessage));
 
 	    Exception noCounterSelectedException = assertThrows(IllegalArgumentException.class, () -> {
-			board.moveCounter(2, 3,6, 4,5);
+	    	board.moveCounter(2, new Coordinate2D(3,6), new Coordinate2D(4,5));
 	    });	 
 	    String actualNoCounterMessage = noCounterSelectedException.getMessage();	 
 	    assertTrue(actualNoCounterMessage.contains(expectedInvalidMoveMessage));
 	    
 	    Exception notDiagonalException = assertThrows(IllegalArgumentException.class, () -> {
-			board.moveCounter(2, 2,5, 2,4);
+	    	board.moveCounter(2, new Coordinate2D(2,5), new Coordinate2D(2,4));
 	    });	 	    
 	    String actualNotDiagonalMessage = notDiagonalException.getMessage();	 
 	    assertTrue(actualNotDiagonalMessage.contains(expectedInvalidMoveMessage));	    
@@ -102,9 +103,9 @@ class BoardTests {
 	
 	@Test
 	void takeCounterTests() {
-		board.moveCounter(1, 3,2, 4,3);
-		board.moveCounter(2, 6,5, 5,4);
-		board.moveCounter(1, 4,3, 6,5);
+		board.moveCounter(1, new Coordinate2D(3,2), new Coordinate2D(4,3));
+		board.moveCounter(2, new Coordinate2D(6,5), new Coordinate2D(5,4));
+		board.moveCounter(1, new Coordinate2D(4,3), new Coordinate2D(6,5));
 		int[][] expectedBoard = {{0,1,0,1,0,1,0,1},
 								 {1,0,1,0,1,0,1,0},
 								 {0,1,0,0,0,1,0,1},
@@ -118,30 +119,30 @@ class BoardTests {
 		String expectedInvalidTakeMessage = "Invalid take";
 		
 		Exception noTakeCounterException = assertThrows(IllegalArgumentException.class, () -> {
-			board.moveCounter(2, 0,5, 2,3);
+			board.moveCounter(2, new Coordinate2D(0,5), new Coordinate2D(2,3));
 	    });
 	    String actualNoTakeCounterMessage = noTakeCounterException.getMessage();
 	    assertTrue(actualNoTakeCounterMessage.contains(expectedInvalidTakeMessage));
 	    
 	    Exception takeOwnCounterException = assertThrows(IllegalArgumentException.class, () -> {
-			board.moveCounter(2, 1,6, 3,4);
+	    	board.moveCounter(2, new Coordinate2D(1,6), new Coordinate2D(3,4));
 	    });	 
 	    String actualTakeOwnCounterMessage = takeOwnCounterException.getMessage();
 	    assertTrue(actualTakeOwnCounterMessage.contains(expectedInvalidTakeMessage));
 	    
-	    board.moveCounter(2, 0,5, 1,4);
-	    board.moveCounter(1, 7,2, 6,3);
-	    board.moveCounter(2, 1,4, 2,3);
-	    board.moveCounter(1, 6,3, 5,4);
+	    board.moveCounter(2, new Coordinate2D(0,5), new Coordinate2D(1,4));
+	    board.moveCounter(1, new Coordinate2D(7,2), new Coordinate2D(6,3));
+	    board.moveCounter(2, new Coordinate2D(1,4), new Coordinate2D(2,3));
+	    board.moveCounter(1, new Coordinate2D(6,3), new Coordinate2D(5,4));
 	    Exception landingSpaceFilledException = assertThrows(IllegalArgumentException.class, () -> {
-			board.moveCounter(2, 7,6, 5,4);
+	    	board.moveCounter(2, new Coordinate2D(7,6), new Coordinate2D(5,4));
 	    });	 
 	    String actualLandingSpaceFilledMessage = landingSpaceFilledException.getMessage();
 	    assertTrue(actualLandingSpaceFilledMessage.contains(expectedInvalidTakeMessage));
 
 	    
 	    Exception opponentCounterSelectedException = assertThrows(IllegalArgumentException.class, () -> {
-			board.moveCounter(2, 1,2, 3,4);
+	    	board.moveCounter(2, new Coordinate2D(1,2), new Coordinate2D(3,4));
 	    });	 
 	    String actualOpponentCounterSelectedMessage = opponentCounterSelectedException.getMessage();
 	    assertTrue(actualOpponentCounterSelectedMessage.contains(expectedInvalidTakeMessage));
@@ -149,16 +150,16 @@ class BoardTests {
 	
 	@Test
 	void upgradedTileTests() {
-		board.moveCounter(1, 3,2, 4,3);
-		board.moveCounter(2, 6,5, 5,4);
-		board.moveCounter(1, 4,3, 6,5);
-		board.moveCounter(2, 7,6, 5,4);
-		board.moveCounter(1, 4,1, 3,2);
-		board.moveCounter(2, 5,4, 4,3);
-		board.moveCounter(1, 3,2, 2,3);
-		board.moveCounter(2, 4,3, 3,2);
-		board.moveCounter(1, 5,0, 4,1);
-		board.moveCounter(2, 3,2, 5,0);
+		board.moveCounter(1, new Coordinate2D(3,2), new Coordinate2D(4,3));
+		board.moveCounter(2, new Coordinate2D(6,5), new Coordinate2D(5,4));
+		board.moveCounter(1, new Coordinate2D(4,3), new Coordinate2D(6,5));
+		board.moveCounter(2, new Coordinate2D(7,6), new Coordinate2D(5,4));
+		board.moveCounter(1, new Coordinate2D(4,1), new Coordinate2D(3,2));
+		board.moveCounter(2, new Coordinate2D(5,4), new Coordinate2D(4,3));
+		board.moveCounter(1, new Coordinate2D(3,2), new Coordinate2D(2,3));
+		board.moveCounter(2, new Coordinate2D(4,3), new Coordinate2D(3,2));
+		board.moveCounter(1, new Coordinate2D(5,0), new Coordinate2D(4,1));
+		board.moveCounter(2, new Coordinate2D(3,2), new Coordinate2D(5,0));
 		int[][] expectedInitialBoard = {{0,1,0,1,0,-2,0,1},
 										{1,0,1,0,0, 0,1,0},
 										{0,1,0,0,0, 1,0,1},
@@ -169,8 +170,8 @@ class BoardTests {
 										{2,0,2,0,2, 0,2,0}};
 		assertArrayEquals(expectedInitialBoard, board.getBoardState());
 		
-		board.moveCounter(1, 1,2, 0,3);
-		board.moveCounter(2, 5,0, 4,1);
+		board.moveCounter(1, new Coordinate2D(1,2), new Coordinate2D(0,3));
+		board.moveCounter(2, new Coordinate2D(5,0), new Coordinate2D(4,1));
 		int[][] expectedMoveBoard = {{0,1,0,1, 0,0,0,1},
 									 {1,0,1,0,-2,0,1,0},
 									 {0,0,0,0, 0,1,0,1},
@@ -181,10 +182,10 @@ class BoardTests {
 									 {2,0,2,0, 2,0,2,0}};
 		assertArrayEquals(expectedMoveBoard, board.getBoardState());
 		
-		board.moveCounter(1, 2,1, 1,2);
-		board.moveCounter(2, 4,1, 3,2);
-		board.moveCounter(1, 3,0, 2,1);
-		board.moveCounter(2, 3,2, 1,4);		
+		board.moveCounter(1, new Coordinate2D(2,1), new Coordinate2D(1,2));
+		board.moveCounter(2, new Coordinate2D(4,1), new Coordinate2D(3,2));
+		board.moveCounter(1, new Coordinate2D(3,0), new Coordinate2D(2,1));
+		board.moveCounter(2, new Coordinate2D(3,2), new Coordinate2D(1,4));
 		int[][] expectedTakeBoard = {{0, 1,0,0,0,0,0,1},
 									 {1, 0,1,0,0,0,1,0},
 									 {0, 1,0,0,0,1,0,1},

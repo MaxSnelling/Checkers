@@ -62,7 +62,12 @@ public class Server {
 		updateClientGameList();
 	}	
 	
-	void joinGame(Board game) {
+	/**
+	 * Adds user to game by working out which is the
+	 * new player. Updates players, games list and database
+	 * @param game	game with new player joined
+	 */
+	public void joinGame(Board game) {
 		Board joiningGameServer = getBoard(game.getGameID());
 		addPlayer(joiningGameServer, game);
 		updateGameServer(joiningGameServer);
@@ -70,7 +75,14 @@ public class Server {
 		updateClientGameList();
 	} 
 	
-	void addPlayer(Board serverGame, Board clientGame) {
+	/**
+	 * Based on if a player is already in the game, only
+	 * the new player is added to the server copy of the 
+	 * game
+	 * @param serverGame	server copy of game
+	 * @param clientGame	client game with added player
+	 */
+	public void addPlayer(Board serverGame, Board clientGame) {
 		if(serverGame.getPlayer1() == null) {
 			serverGame.addPlayer(clientGame.getPlayer1());
 		} else if(serverGame.getPlayer2() == null) {
@@ -79,13 +91,13 @@ public class Server {
 		DatabaseQuery.addPlayer(serverGame);
 	}
 	
-	void updatePlayersGame(int gameID) {
+	public void updatePlayersGame(int gameID) {
 		Board latestGame = getBoard(gameID);
 		ArrayList<ClientThread> gameClients = getGameClients(latestGame);
 		updateClientsGame(gameClients, latestGame);		
 	}
 	
-	ArrayList<ClientThread> getGameClients(Board game) {
+	public ArrayList<ClientThread> getGameClients(Board game) {
 		ArrayList<ClientThread> gameClients = new ArrayList<>();
 		String player1 = game.getPlayer1();
 		String player2 = game.getPlayer2();
@@ -98,7 +110,7 @@ public class Server {
 		return gameClients;
 	}
 	
-	void updateClientsGame(ArrayList<ClientThread> clients, Board game) {
+	public void updateClientsGame(ArrayList<ClientThread> clients, Board game) {
 		for(ClientThread client:clients) {
 			client.updateGame(game);
 			if(!game.playing()) {
@@ -108,7 +120,7 @@ public class Server {
 		}
 	}
 	
-	Board getBoard(int gameID) {
+	public Board getBoard(int gameID) {
 		for(Board game:games) {
 			if(game.getGameID() == gameID) 
 				return game;
@@ -116,7 +128,7 @@ public class Server {
 		throw new InvalidParameterException("Game not found");
 	}
 	
-	void updateGameServer(Board game) {
+	public void updateGameServer(Board game) {
 		int gameIndex = -1;
 		for(int i=0; i<games.size(); i++) {
 			if(games.get(i).getGameID() == game.getGameID()) {
@@ -127,19 +139,23 @@ public class Server {
 		games.set(gameIndex, game);
 	}
 	
-	void updateClientGameList() {
+	public void updateClientGameList() {
 		for(ClientThread client:clients) {
 			client.sendObjectToClient(games);
 		}
 	}
 	
-	void logOutClient(ClientThread client) {
+	public void logOutClient(ClientThread client) {
 		clients.remove(client);
 		System.out.println("Disconnected Client");
 	}
 	
 	public ArrayList<Board> getGames() {
 		return games;
+	}
+	
+	public ArrayList<ClientThread> getClients() {
+		return clients;
 	}
 	
 	public static void main(String[] args) {

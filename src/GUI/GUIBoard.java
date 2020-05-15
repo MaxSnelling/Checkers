@@ -2,6 +2,7 @@ package GUI;
 
 import java.util.ArrayList;
 import Game.Board;
+import Game.Coordinate2D;
 import Server.Client;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -118,9 +119,11 @@ public class GUIBoard extends Application {
 					if(selectedCounterLocation != null && client.isPlaying()) {
 						int counterXLocation = selectedCounterLocation.charAt(0) - 48;
 						int counterYLocation = selectedCounterLocation.charAt(2) - 48;
+						Coordinate2D counterLocation = new Coordinate2D(counterXLocation, counterYLocation);
 						int squareXLocation = square.getId().charAt(0) - 48;
-						int squareYLocation = square.getId().charAt(2) - 48;		
-						client.moveCounter(counterXLocation, counterYLocation, squareXLocation, squareYLocation);
+						int squareYLocation = square.getId().charAt(2) - 48;
+						Coordinate2D squareLocation = new Coordinate2D(squareXLocation, squareYLocation);
+						client.moveCounter(counterLocation, squareLocation);
 						selectedCounterLocation = null;
 						redrawCounters();
 						}

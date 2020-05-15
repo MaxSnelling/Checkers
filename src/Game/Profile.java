@@ -20,13 +20,15 @@ public class Profile implements Serializable {
 	private LocalDate dateOfBirth;
 	private String emailAddress;
 	private Command command;
-	
+		
+	// Constructor used by GUI when logging in
 	public Profile(String username, String password) {
 		this.username = username;
 		this.password = password;
 		this.command = Command.NULL;
 	}
 	
+	// Constructor used for sign up and database profile retrieval
 	public Profile(String username, String firstName, String lastName,
 					String password, LocalDate dateOfBirth, String emailAddress) {
 		this.username = username;

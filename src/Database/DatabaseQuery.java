@@ -22,6 +22,13 @@ import Server.Command;
  */
 public class DatabaseQuery {
 	
+	/**
+	 * Sets the status of a user as logged in on the database.
+	 * Gets all the information related to that profile from the
+	 * database and sends to back to the client.
+	 * @param profile	profile object containing username/password input
+	 * @return	the full database details of the user
+	 */
 	public static Profile logIn(Profile profile) {
 		try {
 			Connection connection = DatabaseConnect.connectDatabase();
@@ -55,6 +62,12 @@ public class DatabaseQuery {
 		}		
 	}
 	
+	/**
+	 * Checks the users table to check that the user is not already
+	 * logged in on another device.
+	 * @param username	username of profile to check log in status for
+	 * @return	status on if the user is logged out
+	 */
 	public static boolean loggedOutCheck(String username) {
 		Boolean loggedOutStatus = null;
 		try {
@@ -73,6 +86,13 @@ public class DatabaseQuery {
 		return loggedOutStatus;
 	}
 	
+	/**
+	 * Checks whether the input password matches the database password
+	 * for a given input username. Returns false if the username is not
+	 * in the table.
+	 * @param profile	profile object containing username/password input
+	 * @return	status on if the password matches username
+	 */
 	public static boolean passwordCheck(Profile profile) {
 		try {
 			Connection connection = DatabaseConnect.connectDatabase();
@@ -94,6 +114,12 @@ public class DatabaseQuery {
 		}		
 	}
 	
+	/**
+	 * Checks if the username entered during sign up is not used
+	 * by any other user on the platform
+	 * @param username	username entered at sign up
+	 * @return	status on if username is available
+	 */
 	public static boolean usernameAvailableCheck(String username) {
 		try {
 			Connection connection = DatabaseConnect.connectDatabase();
@@ -112,12 +138,19 @@ public class DatabaseQuery {
 		}		
 	}
 	
+	/**
+	 * Adds a new player to a current game. Checks first if a player is already
+	 * in the game to see if the new player should be player 1 or 2. Adds log
+	 * of user to game connection in user_games. 
+	 * @param board		board object containing players in game
+	 */
 	public static void addPlayer(Board board) {
 		try {
 			Connection connection = DatabaseConnect.connectDatabase();
 			
 			PreparedStatement getPlayer1Statement = connection.prepareStatement(
-					"SELECT player1 FROM games WHERE game_ID = '" + board.getGameID() + "'");
+					"SELECT player1 FROM games WHERE game_ID = ?");
+			getPlayer1Statement.setInt(1, board.getGameID());
 			ResultSet getPlayer1Result = getPlayer1Statement.executeQuery();
 			getPlayer1Result.next();
 			String player1 = getPlayer1Result.getString("player1");	
@@ -141,6 +174,12 @@ public class DatabaseQuery {
 		}	
 	}
 	
+	/**
+	 * Gets the database user ID for a given username. Returns -1 if
+	 * the username is not found.
+	 * @param username	username of user to check to database
+	 * @return	user ID of user
+	 */
 	public static int getUserID(String username) {
 		try {
 			Connection connection = DatabaseConnect.connectDatabase();			
@@ -156,6 +195,11 @@ public class DatabaseQuery {
 		}
 	}
 	
+	/**
+	 * Retrieves the 5 most recent games which the user has played in.
+	 * @param username	user to get recent games of
+	 * @return	List of up to 5 most recent games as well as 1 identifier game 
+	 */
 	public static ArrayList<Board> getLast5Games(String username) {
 		try {
 			Connection connection = DatabaseConnect.connectDatabase();			
@@ -192,6 +236,10 @@ public class DatabaseQuery {
 		}
 	}
 	
+	/**
+	 * Updates the game in the database with a game end time.
+	 * @param board		the game which has finished
+	 */
 	public static void updateGameEnd(Board board) {
 		try {
 			Connection connection = DatabaseConnect.connectDatabase();			
@@ -211,6 +259,11 @@ public class DatabaseQuery {
 		}
 	}
 	
+	/**
+	 * Sets a users status on the database as logged out when
+	 * they exit the application.
+	 * @param username	the user who needs to be logged out
+	 */
 	public static void logOut(String username) {
 		try {
 			Connection connection = DatabaseConnect.connectDatabase();

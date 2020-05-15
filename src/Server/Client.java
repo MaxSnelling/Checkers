@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import Game.Board;
+import Game.Coordinate2D;
 import Game.Profile;
 
 /**
@@ -129,8 +130,8 @@ public class Client implements Serializable {
 		inGame = true;
 	}
 	
-	public void moveCounter(int currentX, int currentY, int newX, int newY) {
-		currentGame.moveCounter(playerNumber, currentX, currentY, newX, newY);
+	public void moveCounter(Coordinate2D currentPos, Coordinate2D newPos) {
+		currentGame.moveCounter(playerNumber, currentPos, newPos);
 		currentGame.setCommand(Command.UPDATE);
 		sendObjectToServer(currentGame);
 	}

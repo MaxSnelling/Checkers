@@ -128,7 +128,7 @@ public class ClientThread extends Thread implements Runnable {
 		sendObjectToClient(profile);
 	}
 	
-	void usernameCheck(Profile profile) {
+	private void usernameCheck(Profile profile) {
 		String username = profile.getUsername();
 		if(DatabaseQuery.usernameAvailableCheck(username)) {
 			profile.setCommand(Command.CORRECT);
@@ -136,7 +136,7 @@ public class ClientThread extends Thread implements Runnable {
 		sendObjectToClient(profile);
 	}
 	
-	void addNewProfile(Profile profile) {
+	private void addNewProfile(Profile profile) {
 		DatabaseInsert.addProfile(profile);
 	}
 	
@@ -146,19 +146,19 @@ public class ClientThread extends Thread implements Runnable {
 		disconnectClient();
 	}
 	
-	void newGame(Board game){
+	private void newGame(Board game){
 		server.createGame();
 	}
 	
-	void sendGameList() {
+	private void sendGameList() {
 		sendObjectToClient(server.getGames());
 	}
 	
-	void joinGame(Board game) {
+	private void joinGame(Board game) {
 		server.joinGame(game);
 	}
 	
-	void updateGameServer(Board game) {
+	private void updateGameServer(Board game) {
 		server.updateGameServer(game);
 		server.updatePlayersGame(game.getGameID());
 	}
@@ -187,7 +187,7 @@ public class ClientThread extends Thread implements Runnable {
 		return null;
 	}
 	
-	void threadWait() {
+	private void threadWait() {
 		try {
 			Thread.sleep(10);
 		} catch (InterruptedException e1) {
@@ -195,7 +195,7 @@ public class ClientThread extends Thread implements Runnable {
 		}
 	}
 	
-	<E> void sendObjectToClient(E object) {
+	public<E> void sendObjectToClient(E object) {
 		try {
 			out.writeObject(object);
 			out.flush();

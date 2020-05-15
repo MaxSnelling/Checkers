@@ -12,22 +12,22 @@ import java.sql.SQLException;
  * @version 5/5/20
  */
 public class DatabaseConnect {
-	public static Connection connectDatabase() throws IOException {
-        String url = "jdbc:postgresql://localhost/checkers";
-        String username = "checkers";
-        String password = "password";
-        
-        try {
-            return DriverManager.getConnection(url, username, password);
-        } catch (SQLException e) {
-            System.out.println("Database Connection Failed");
-        }
-
-        return null;
+	/**
+	 * Connects to the system PostgreSQL Checkers database 
+	 */
+	public static Connection connectDatabase() throws IOException, SQLException {
+		String url = "jdbc:postgresql://localhost/checkers";
+		String username = "checkers";
+		String password = "password";
+		return DriverManager.getConnection(url, username, password);
     }
 
     public static void main(String[] args) throws IOException {
-        connectDatabase();
+        try {
+			connectDatabase();
+		} catch (IOException | SQLException e) {
+			System.out.println("Database Connection Failed");
+		}
         System.out.println("Database Connection Created");
     }
 }
