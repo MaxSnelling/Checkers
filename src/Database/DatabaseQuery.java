@@ -184,7 +184,8 @@ public class DatabaseQuery {
 		try {
 			Connection connection = DatabaseConnect.connectDatabase();			
 			PreparedStatement getUserIDStatement = connection.prepareStatement(
-					"SELECT user_ID FROM users WHERE username = '" + username + "'");
+					"SELECT user_ID FROM users WHERE username = ?");
+			getUserIDStatement.setString(1, username);
 			ResultSet getUserIDResult = getUserIDStatement.executeQuery();
 			getUserIDResult.next();
 			return getUserIDResult.getInt("user_ID");
