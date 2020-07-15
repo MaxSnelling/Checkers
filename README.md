@@ -26,7 +26,7 @@
 
 ### Future Changes
 
-- Added TCP/UDP networking
+- Add TCP/UDP networking
 - Improve GUI design using FXML
 - Improve Server-Client communication efficiency
 
